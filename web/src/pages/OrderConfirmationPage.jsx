@@ -146,12 +146,12 @@ const OrderConfirmationPage = () => {
                         Quantidade: {item.quantity || 0}
                       </p>
                       <p className="text-sm text-gray-600">
-                        Preço: ${(item.unitPrice || 0).toFixed(2)} cada
+                        Preço: R$ {(item.unitPrice || 0).toFixed(2)} cada
                       </p>
                     </div>
                     <div className="text-right">
                       <p className="font-medium text-gray-900">
-                        $
+                        R$
                         {((item.unitPrice || 0) * (item.quantity || 0)).toFixed(
                           2
                         )}
@@ -165,7 +165,7 @@ const OrderConfirmationPage = () => {
             <div className="flex justify-between items-center">
               <span className="text-lg font-semibold text-gray-900">Total</span>
               <span className="text-lg font-semibold text-gray-900">
-                ${(order.total || 0).toFixed(2)}
+                R$ {(order.total || 0).toFixed(2)}
               </span>
             </div>
           </div>

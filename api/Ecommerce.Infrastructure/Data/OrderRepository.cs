@@ -19,12 +19,11 @@ public class OrderRepository : IOrderRepository
             .Include(o => o.Customer)
             .Include(o => o.Items)
             .FirstOrDefaultAsync(o => o.Id == id);
-    }
-
-    public async Task<IEnumerable<Order>> GetByCustomerIdAsync(Guid customerId)
+    }    public async Task<IEnumerable<Order>> GetByCustomerIdAsync(Guid customerId)
     {
         return await _context.Orders
             .Include(o => o.Items)
+                .ThenInclude(i => i.Product)
             .Where(o => o.CustomerId == customerId)
             .OrderByDescending(o => o.CreatedAt)
             .ToListAsync();

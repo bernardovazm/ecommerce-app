@@ -1,9 +1,27 @@
 import { Link } from "react-router-dom";
-import { ShoppingCart, Search, Menu } from "lucide-react";
+import { ShoppingCart, Search, Menu, User, LogOut } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
+import { useState, useEffect, useRef } from "react";
 
 const Header = () => {
   const { getCartItemsCount } = useCart();
+  const { user, logout } = useAuth();
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const userMenuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <header className="bg-white shadow-sm border-b">
@@ -37,7 +55,6 @@ const Header = () => {
                 className="bg-transparent border-none outline-none text-sm w-40"
               />
             </div>
-
             <Link
               to="/cart"
               className="relative p-2 text-gray-600 hover:text-blue-600 transition-colors"
@@ -49,7 +66,56 @@ const Header = () => {
                 </span>
               )}
             </Link>
+            {user ? (
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center space-x-2 p-2 text-gray-600 hover:text-blue-600 transition-colors"
+                >
+                  <User className="h-6 w-6" />
+                  <span className="hidden sm:inline text-sm">
+                    {user.firstName || user.email.split("@")[0]}
+                  </span>
+                </button>
 
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border">
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      Meu perfil
+                    </Link>
+                    <button
+                      onClick={() => {
+                        logout();
+                        setShowUserMenu(false);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      <LogOut className="h-4 w-4 inline mr-2" />
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Link
+                  to="/login"
+                  className="text-gray-600 hover:text-blue-600 transition-colors px-3 py-2 text-sm"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="bg-blue-600 text-white px-3 py-2 rounded-md text-sm hover:bg-blue-700 transition-colors"
+                >
+                  Criar conta
+                </Link>
+              </div>
+            )}
             <button className="md:hidden p-2 text-gray-600">
               <Menu className="h-6 w-6" />
             </button>

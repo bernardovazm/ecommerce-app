@@ -9,6 +9,9 @@ public sealed class OrderItem : AuditableEntity<Guid>
     public decimal UnitPrice { get; private set; }
     public int Quantity   { get; private set; }
 
+    // Navigation properties
+    public Product? Product { get; private set; }
+
     public decimal Total => UnitPrice * Quantity;
 
     private OrderItem() { }

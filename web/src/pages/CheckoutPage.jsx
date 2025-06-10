@@ -362,7 +362,7 @@ const CheckoutPage = () => {
                     htmlFor="cardholderName"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Nome do Portador *
+                    Nome do Titular *
                   </label>
                   <input
                     type="text"
@@ -494,7 +494,7 @@ const CheckoutPage = () => {
                     </p>
                   </div>
                   <p className="text-sm font-medium text-gray-900">
-                    ${(item.product.price * item.quantity).toFixed(2)}
+                    R$ {(item.product.price * item.quantity).toFixed(2)}
                   </p>
                 </div>
               ))}
@@ -503,7 +503,7 @@ const CheckoutPage = () => {
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal</span>
                 <span className="font-medium">
-                  ${getCartTotal().toFixed(2)}
+                  R$ {getCartTotal().toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between">
@@ -513,7 +513,7 @@ const CheckoutPage = () => {
               <div className="flex justify-between">
                 <span className="text-gray-600">Taxa</span>
                 <span className="font-medium">
-                  ${(getCartTotal() * 0.08).toFixed(2)}
+                  R$ {(getCartTotal() * 0.08).toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between pt-2 border-t">
@@ -521,7 +521,7 @@ const CheckoutPage = () => {
                   Total
                 </span>
                 <span className="text-lg font-semibold text-gray-900">
-                  ${(getCartTotal() * 1.08).toFixed(2)}
+                  R$ {(getCartTotal() * 1.08).toFixed(2)}
                 </span>
               </div>
             </div>

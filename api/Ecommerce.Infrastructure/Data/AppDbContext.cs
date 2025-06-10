@@ -30,35 +30,37 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             e.HasKey(c => c.Id);
             e.Property(c => c.Name).IsRequired().HasMaxLength(100);
-        });
-
-        modelBuilder.Entity<User>(e =>
+        });        modelBuilder.Entity<User>(e =>
         {
             e.HasKey(u => u.Id);
             e.Property(u => u.Email).IsRequired().HasMaxLength(255);
+            e.Property(u => u.PasswordHash).IsRequired().HasMaxLength(500);
+            e.Property(u => u.FirstName).IsRequired().HasMaxLength(100);
+            e.Property(u => u.LastName).IsRequired().HasMaxLength(100);
+            e.Property(u => u.Role).HasConversion<int>();
             e.HasIndex(u => u.Email).IsUnique();
-        });
-
-        modelBuilder.Entity<Customer>(e =>
+        });        modelBuilder.Entity<Customer>(e =>
         {
-            e.Property(c => c.Name).IsRequired().HasMaxLength(100);
+            e.Property(c => c.Phone).HasMaxLength(20);
+            e.Property(c => c.ShippingAddress).HasMaxLength(500);
         });
 
         modelBuilder.Entity<Order>(e =>
         {
             e.HasKey(o => o.Id);
             e.HasOne(o => o.Customer)
-              .WithMany()
+              .WithMany(c => c.Orders)
               .HasForeignKey(o => o.CustomerId);
             e.HasMany(o => o.Items)
               .WithOne()
               .HasForeignKey(oi => oi.OrderId);
-        });
-
-        modelBuilder.Entity<OrderItem>(e =>
+        });        modelBuilder.Entity<OrderItem>(e =>
         {
             e.HasKey(oi => oi.Id);
             e.Property(oi => oi.UnitPrice).HasColumnType("decimal(12,2)");
+            e.HasOne(oi => oi.Product)
+              .WithMany()
+              .HasForeignKey(oi => oi.ProductId);
         });
 
         modelBuilder.Entity<Payment>(e =>

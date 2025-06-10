@@ -142,7 +142,7 @@ const ProductDetailPage = () => {
               {product.name}
             </h1>
             <p className="text-2xl font-bold text-blue-600">
-              ${product.price.toFixed(2)}
+              R$ {product.price.toFixed(2)}
             </p>
           </div>
           <div className="flex items-center space-x-2">
@@ -265,7 +265,7 @@ const ProductDetailPage = () => {
               </div>
 
               <div className="mt-4 text-sm text-gray-600">
-                <p>Total: ${(product.price * quantity).toFixed(2)}</p>
+                <p>Total: R$ {(product.price * quantity).toFixed(2)}</p>
               </div>
             </div>
           )}

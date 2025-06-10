@@ -122,7 +122,7 @@ const CartPage = () => {
                         </button>
                       </h3>
                       <p className="text-gray-600">
-                        ${item.product.price.toFixed(2)} each
+                        R$ {item.product.price.toFixed(2)} each
                       </p>
                       {item.product.category && (
                         <p className="text-sm text-gray-500">
@@ -184,7 +184,7 @@ const CartPage = () => {
                     </div>
                     <div className="text-right">
                       <p className="text-lg font-medium text-gray-900">
-                        ${(item.product.price * item.quantity).toFixed(2)}
+                        R$ {(item.product.price * item.quantity).toFixed(2)}
                       </p>
                       <button
                         onClick={() => removeFromCart(item.product.id)}
@@ -216,7 +216,7 @@ const CartPage = () => {
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal</span>
                 <span className="font-medium">
-                  ${getCartTotal().toFixed(2)}
+                  R$ {getCartTotal().toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between">
@@ -233,7 +233,7 @@ const CartPage = () => {
                     Total
                   </span>
                   <span className="text-lg font-semibold text-gray-900">
-                    ${getCartTotal().toFixed(2)}
+                    R$ {getCartTotal().toFixed(2)}
                   </span>
                 </div>
               </div>

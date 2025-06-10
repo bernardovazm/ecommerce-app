@@ -4,13 +4,13 @@ Aplicação full stack de loja virtual, desenvolvida com .NET no backend e React
 
 ## Tecnologias
 
-Backend (.NET 8 + PostgreSQL)
+Backend (.NET + PostgreSQL)
 
 - ASP.NET Core, Entity Framework Core
 - MediatR/CQRS, AutoMapper
 - Docker, Swagger
 
-Frontend (React 18)
+Frontend (React)
 
 - React + Vite
 - Tailwind CSS, React Router, Axios
@@ -24,10 +24,34 @@ DevOps
 
 ## Executar
 
-Instale o Docker; Docker Compose e execute o seguinte comando no terminal:
+#### Instale o Docker e execute os comandos no terminal:
 
 ```bash
+# clone o repositório
+git clone <repository-url>
+# configure variáveis de ambiente
+cp .env.example .env
+# na raiz do projeto, execute
 docker compose up --build
+# frontend: http://localhost:5173
+# backend: http://localhost:5220/swagger
+```
+
+#### Ou em desenvolvimento:
+
+```bash
+# env vars
+cp .env.example .env
+# banco
+docker compose up db -d
+# backend
+cd api
+dotnet restore
+dotnet run --project Ecommerce.Api
+# frontend
+cd web
+pnpm install
+pnpm dev
 ```
 
 ## Visualização
@@ -38,7 +62,7 @@ docker compose up --build
 
 ## Estrutura
 
-### Backend .NET
+Backend
 
 - Domain: Entidades e regras de negócio
 - Application: Casos de uso (CQRS)
@@ -46,17 +70,18 @@ docker compose up --build
 - Api: Controllers e configuração
 - Tests: Testes unitários
 
-### Frontend React
+Frontend
 
 - components: Componentes reutilizáveis
 - pages: Páginas da aplicação
 - context: Context API (estado global)
 - services: Integração com API
 
-### DB Postgresql
+Banco de dados
 
-- Products(id, name, description, price, imageUrl, categoryId)
-- Orders(id, customerId, total, status)
-- OrderItems(orderId, productId, quantity, unitPrice)
+- Usuários e Autenticação: Users, Customers
+- Catálogo de Produtos: Categories, Products
+- Sistema de Pedidos: Orders, OrderItems
+- Pagamentos e Envio: Payments, Shipments
 
-Projeto demonstrativo com foco em arquitetura limpa, separar de responsabilidades e boas práticas de desenvolvimento.
+Projeto demonstrativo com foco em arquitetura limpa, CQRS para separação de comandos e consultas, DDD, JWT, design responsivo e padrões modernos.
