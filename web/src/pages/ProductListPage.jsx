@@ -139,7 +139,7 @@ const ProductListPage = () => {
           <div className="flex justify-between items-center mb-6">
             <p className="text-gray-600">
               Mostrando {(currentPage - 1) * pageSize + 1}-
-              {Math.min(currentPage * pageSize, totalCount)} de {totalCount}
+              {Math.min(currentPage * pageSize, totalCount)} de {totalCount}{" "}
               produtos
             </p>
           </div>
@@ -153,7 +153,7 @@ const ProductListPage = () => {
               ))}
             </div>
           ) : products.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               {products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

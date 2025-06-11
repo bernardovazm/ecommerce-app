@@ -145,23 +145,6 @@ const ProductDetailPage = () => {
               R$ {product.price.toFixed(2)}
             </p>
           </div>
-          <div className="flex items-center space-x-2">
-            {product.stock > 0 ? (
-              <>
-                <span className="inline-block w-3 h-3 bg-green-500 rounded-full"></span>
-                <span className="text-green-600 font-medium">
-                  Em Estoque ({product.stock} disponíveis)
-                </span>
-              </>
-            ) : (
-              <>
-                <span className="inline-block w-3 h-3 bg-red-500 rounded-full"></span>
-                <span className="text-red-600 font-medium">
-                  Fora de Estoque
-                </span>
-              </>
-            )}
-          </div>
           {product.category && (
             <div>
               <span className="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
@@ -267,16 +250,6 @@ const ProductDetailPage = () => {
               <div className="mt-4 text-sm text-gray-600">
                 <p>Total: R$ {(product.price * quantity).toFixed(2)}</p>
               </div>
-            </div>
-          )}
-          {product.stock === 0 && (
-            <div className="border-t pt-6">
-              <button
-                disabled
-                className="w-full bg-gray-300 text-gray-500 py-3 px-6 rounded-lg font-medium cursor-not-allowed"
-              >
-                Fora de Estoque
-              </button>
             </div>
           )}
         </div>

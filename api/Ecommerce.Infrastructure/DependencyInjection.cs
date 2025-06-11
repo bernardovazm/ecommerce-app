@@ -3,6 +3,7 @@ using Ecommerce.Domain.Interfaces;
 using Ecommerce.Infrastructure.Data;
 using Ecommerce.Infrastructure.Auth;
 using Ecommerce.Infrastructure.Email;
+using Ecommerce.Infrastructure.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,12 +17,14 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("Default") 
                 ?? "Host=localhost;Database=ecommerce;Username=postgres;Password=postgres"));
-        
-        // Repositories
+          // Repositories
         services.AddScoped<IProductReadRepository, ProductReadRepository>();
-        services.AddScoped<IOrderRepository, OrderRepository>();
-        services.AddScoped<ICategoryRepository, CategoryRepository>();        services.AddScoped<ICustomerRepository, CustomerRepository>();
-        services.AddScoped<IUserRepository, UserRepository>();        
+        services.AddScoped<Domain.Interfaces.IOrderRepository, OrderRepository>();
+        services.AddScoped<Domain.Repositories.IOrderRepository, OrderRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
+        services.AddScoped<ICustomerRepository, CustomerRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IPaymentRequestRepository, PaymentRequestRepository>();
         
         // Authentication Services
         services.AddScoped<IAuthService, AuthService>();
@@ -31,6 +34,10 @@ public static class DependencyInjection
         
         // Email Services
         services.AddScoped<IEmailService, SmtpEmailService>();
+
+        // Messaging Services
+        services.AddSingleton<IMessagePublisher, RabbitMQPublisher>();
+        services.AddHostedService<PaymentRequestConsumer>();
 
         return services;
     }

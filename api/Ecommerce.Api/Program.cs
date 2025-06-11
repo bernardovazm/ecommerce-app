@@ -13,7 +13,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Load environment variables from .env file in development
+// load environment variables from .env file in dev
 if (builder.Environment.IsDevelopment())
 {
     var envPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", ".env");
@@ -37,7 +37,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetProductsQuery)));
 
-// Authentication
+// auth
 var jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") 
     ?? builder.Configuration["Jwt:SecretKey"] 
     ?? throw new InvalidOperationException("JWT SecretKey not configured. Set JWT_SECRET_KEY environment variable or configure Jwt:SecretKey");
@@ -62,6 +62,9 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 builder.Services.AddScoped<IPaymentService, PagarmePaymentService>();
+
+// add payment processing handler
+builder.Services.AddScoped<Ecommerce.Application.Orders.Commands.ProcessOrderPaymentHandler>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

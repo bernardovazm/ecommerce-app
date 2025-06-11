@@ -9,12 +9,14 @@
     <!-- Mapper -->
     <PackageVersion Include="AutoMapper"                               Version="12.0.1" />
     <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection"
-                                                                   Version="12.0.1" />
-
-    <!-- CQRS / Bus -->
+                                                                   Version="12.0.1" />    <!-- CQRS / Bus -->
     <PackageVersion Include="MediatR"                                  Version="12.1.1" />
     <PackageVersion Include="MassTransit"                              Version="8.2.1" />
     <PackageVersion Include="MassTransit.RabbitMQ"                     Version="8.2.1" />
+
+    <!-- Messaging -->
+    <PackageVersion Include="RabbitMQ.Client"                          Version="6.8.1" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting"             Version="8.0.0" />
 
     <!-- Swagger / OpenAPI -->
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi"             Version="8.0.5" />

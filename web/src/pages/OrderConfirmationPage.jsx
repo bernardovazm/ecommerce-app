@@ -14,6 +14,7 @@ const OrderConfirmationPage = () => {
       try {
         setLoading(true);
         const response = await orderService.getById(orderId);
+        console.log("Order response:", response);
         setOrder(response.data);
       } catch (err) {
         setError("Falha ao carregar detalhes do pedido");
@@ -92,8 +93,8 @@ const OrderConfirmationPage = () => {
                 Pedido #{order.id}
               </h2>
               <p className="text-gray-600">
-                Realizado em
-                {new Date(order.orderDate).toLocaleDateString("pt-BR", {
+                Realizado em{" "}
+                {new Date(order.createdAt).toLocaleDateString("pt-BR", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -139,8 +140,7 @@ const OrderConfirmationPage = () => {
                   >
                     <div className="flex-1">
                       <h4 className="font-medium text-gray-900">
-                        {item.productName ||
-                          `Produto ${item.productId || "Desconhecido"}`}
+                        {item.productName || `Produto ${item.id || "Genérico"}`}
                       </h4>
                       <p className="text-sm text-gray-600">
                         Quantidade: {item.quantity || 0}
@@ -193,7 +193,7 @@ const OrderConfirmationPage = () => {
             </h2>
             <div className="text-gray-600">
               <p>
-                <strong>Nome:</strong> {order.customer?.name}
+                <strong>Nome:</strong> {order.customer?.fullName}
               </p>
               <p>
                 <strong>Email:</strong> {order.customer?.email}

@@ -9,6 +9,7 @@ Backend (.NET + PostgreSQL)
 - ASP.NET Core, Entity Framework Core
 - MediatR/CQRS, AutoMapper
 - Docker, Swagger
+- RabbitMQ
 
 Frontend (React)
 
@@ -24,41 +25,31 @@ DevOps
 
 ## Executar
 
-#### Instale o Docker e execute os comandos no terminal:
+Instale o Docker, clone o repositório e execute os comandos abaixo:
 
 ```bash
-# clone o repositório
-git clone <repository-url>
-# configure variáveis de ambiente
+# crie o arquivo env e configure variáveis de ambiente
 cp .env.example .env
-# na raiz do projeto, execute
+# inicie os containers na raiz do projeto
 docker compose up --build
-# frontend: http://localhost:5173
-# backend: http://localhost:5220/swagger
+# frontend http://localhost:5173
+# swagger http://localhost:7000/swagger
 ```
 
-#### Ou em desenvolvimento:
+---
+
+Comandos para visualizar em desenvolvimento:
 
 ```bash
-# env vars
-cp .env.example .env
-# banco
+# db
 docker compose up db -d
-# backend
-cd api
-dotnet restore
-dotnet run --project Ecommerce.Api
-# frontend
-cd web
-pnpm install
+# web
 pnpm dev
+# api
+cd api && dotnet run --project Ecommerce.Api
+# containers
+docker compose ps
 ```
-
-## Visualização
-
-- Frontend: http://localhost:5173
-- API: http://localhost:5220/api
-- Swagger: http://localhost:5220/swagger
 
 ## Estrutura
 
@@ -84,4 +75,4 @@ Banco de dados
 - Sistema de Pedidos: Orders, OrderItems
 - Pagamentos e Envio: Payments, Shipments
 
-Projeto demonstrativo com foco em arquitetura limpa, CQRS para separação de comandos e consultas, DDD, JWT, design responsivo e padrões modernos.
+Projeto demonstrativo com foco em arquitetura limpa, sistema de mensageria, CQRS para separação de comandos e consultas, DDD, JWT, design responsivo e padrões modernos.

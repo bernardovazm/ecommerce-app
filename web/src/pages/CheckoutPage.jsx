@@ -510,12 +510,6 @@ const CheckoutPage = () => {
                 <span className="text-gray-600">Frete</span>
                 <span className="font-medium">Grátis</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Taxa</span>
-                <span className="font-medium">
-                  R$ {(getCartTotal() * 0.08).toFixed(2)}
-                </span>
-              </div>
               <div className="flex justify-between pt-2 border-t">
                 <span className="text-lg font-semibold text-gray-900">
                   Total

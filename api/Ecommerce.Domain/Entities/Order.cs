@@ -29,10 +29,16 @@ public sealed class Order : AuditableEntity<Guid>
 
     public void Confirm() => Status = OrderStatus.Confirmed;
     public void Cancel() => Status = OrderStatus.Canceled;
+    public void MarkPaymentPending() => Status = OrderStatus.PaymentPending;
+    public void MarkPaymentProcessing() => Status = OrderStatus.PaymentProcessing;
+    public void MarkPaymentFailed() => Status = OrderStatus.PaymentFailed;
 }
 public enum OrderStatus
 {
     Pending,
+    PaymentPending,
+    PaymentProcessing,
+    PaymentFailed,
     Confirmed,
     Canceled,
     Shipped,

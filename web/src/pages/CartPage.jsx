@@ -219,14 +219,6 @@ const CartPage = () => {
                   R$ {getCartTotal().toFixed(2)}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Frete</span>
-                <span className="font-medium">Calculado no checkout</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Taxa</span>
-                <span className="font-medium">Calculado no checkout</span>
-              </div>
               <div className="border-t pt-3">
                 <div className="flex justify-between">
                   <span className="text-lg font-semibold text-gray-900">

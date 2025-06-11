@@ -9,10 +9,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
-    public DbSet<User> Users => Set<User>();
-    public DbSet<Customer> Customers => Set<Customer>();
+    public DbSet<User> Users => Set<User>();    public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<Payment> Payments => Set<Payment>();
-    public DbSet<Shipment> Shipments => Set<Shipment>();    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    public DbSet<PaymentRequest> PaymentRequests => Set<PaymentRequest>();
+    public DbSet<Shipment> Shipments => Set<Shipment>();protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Product>(e =>
         {
@@ -61,13 +61,23 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.HasOne(oi => oi.Product)
               .WithMany()
               .HasForeignKey(oi => oi.ProductId);
-        });
-
-        modelBuilder.Entity<Payment>(e =>
+        });        modelBuilder.Entity<Payment>(e =>
         {
             e.HasKey(p => p.Id);
             e.Property(p => p.Amount).HasColumnType("decimal(12,2)");
             e.Property(p => p.ExternalId).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<PaymentRequest>(e =>
+        {
+            e.HasKey(pr => pr.Id);
+            e.Property(pr => pr.Amount).HasColumnType("decimal(12,2)");
+            e.Property(pr => pr.Currency).IsRequired().HasMaxLength(3);
+            e.Property(pr => pr.PaymentMethod).IsRequired().HasMaxLength(50);
+            e.Property(pr => pr.CustomerEmail).IsRequired().HasMaxLength(255);
+            e.Property(pr => pr.ErrorMessage).HasMaxLength(1000);
+            e.Property(pr => pr.ExternalPaymentId).HasMaxLength(100);
+            e.Property(pr => pr.Status).HasConversion<int>();
         });
 
         modelBuilder.Entity<Shipment>(e =>

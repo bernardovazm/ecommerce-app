@@ -45,9 +45,9 @@ const ProductCard = ({ product }) => {
           </span>
         )}
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <span className="text-xl font-bold text-blue-600">
-            R$ {product.price.toFixed(2)}
+            R$ {product.price.toFixed(2)}{" "}
           </span>
 
           <button

@@ -73,7 +73,6 @@ const ProfilePage = () => {
     setLoading(true);
 
     try {
-      console.log("Profile update:", formData);
       setIsEditing(false);
       setProfile((prev) => ({ ...prev, ...formData }));
     } catch (err) {
@@ -371,23 +370,25 @@ const ProfilePage = () => {
                         <div className="flex items-center justify-between mb-4">
                           <div>
                             <h3 className="text-lg font-medium text-gray-900">
-                              Ordem #{order.id}
+                              Pedido #{order.id}
                             </h3>
                             <p className="text-sm text-gray-500">
                               Solicitado em{" "}
-                              {new Date(order.orderDate).toLocaleDateString(
+                              {new Date(order.createdAt).toLocaleDateString(
                                 navigator.language,
                                 {
                                   year: "numeric",
                                   month: "long",
                                   day: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
                                 }
                               )}
                             </p>
                           </div>
                           <div className="text-right">
                             <p className="text-lg font-bold text-gray-900">
-                              R$ {order.totalAmount?.toFixed(2)}
+                              R$ {order.total?.toFixed(2)}
                             </p>
                             <span
                               className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -400,7 +401,13 @@ const ProfilePage = () => {
                                   : "bg-gray-100 text-gray-800"
                               }`}
                             >
-                              {order.status}
+                              {order.status === "Completed"
+                                ? "Finalizado"
+                                : order.status === "Processing"
+                                ? "Processando"
+                                : order.status === "Cancelled"
+                                ? "Cancelado"
+                                : "Pendente"}
                             </span>
                           </div>
                         </div>
@@ -424,7 +431,7 @@ const ProfilePage = () => {
                               </div>
                               <div className="flex-1">
                                 <h4 className="text-sm font-medium text-gray-900">
-                                  {item.product?.name || "Product Name"}
+                                  {item.productName || "Produto"}
                                 </h4>
                                 <p className="text-sm text-gray-500">
                                   Quantidade: {item.quantity} x R$
