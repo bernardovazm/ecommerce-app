@@ -52,8 +52,8 @@ const HomePage = () => {
               <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                 <Truck className="h-8 w-8 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Frete Barato</h3>
-              <p className="text-gray-600">Acessível em qualquer localização</p>
+              <h3 className="text-xl font-semibold mb-2">Frete Acessível</h3>
+              <p className="text-gray-600">Envio para todo o país</p>
             </div>
             <div className="text-center">
               <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">

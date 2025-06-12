@@ -10,12 +10,12 @@ using Ecommerce.Domain.ValueObjects;
 namespace Ecommerce.Infrastructure.Messaging;
 
 public class RabbitMQPublisher : IMessagePublisher, IDisposable
-{
-    private readonly IConnection? _connection;
+{    private readonly IConnection? _connection;
     private readonly IModel? _channel;
     private readonly ILogger<RabbitMQPublisher> _logger;
     private readonly IServiceProvider _serviceProvider;
-    private readonly IConfiguration _configuration;public RabbitMQPublisher(
+
+    public RabbitMQPublisher(
         IConfiguration configuration, 
         ILogger<RabbitMQPublisher> logger,
         IServiceProvider serviceProvider)

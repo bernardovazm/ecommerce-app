@@ -174,9 +174,8 @@ const CheckoutPage = () => {
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleInputChange}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.firstName ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.firstName ? "border-red-500" : "border-gray-300"
+                      }`}
                   />
                   {errors.firstName && (
                     <p className="text-red-500 text-sm mt-1">
@@ -197,9 +196,8 @@ const CheckoutPage = () => {
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleInputChange}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.lastName ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.lastName ? "border-red-500" : "border-gray-300"
+                      }`}
                   />
                   {errors.lastName && (
                     <p className="text-red-500 text-sm mt-1">
@@ -220,9 +218,8 @@ const CheckoutPage = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.email ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.email ? "border-red-500" : "border-gray-300"
+                      }`}
                   />
                   {errors.email && (
                     <p className="text-red-500 text-sm mt-1">{errors.email}</p>
@@ -241,9 +238,8 @@ const CheckoutPage = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.phone ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.phone ? "border-red-500" : "border-gray-300"
+                      }`}
                   />
                   {errors.phone && (
                     <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
@@ -270,9 +266,8 @@ const CheckoutPage = () => {
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.address ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.address ? "border-red-500" : "border-gray-300"
+                      }`}
                   />
                   {errors.address && (
                     <p className="text-red-500 text-sm mt-1">
@@ -294,9 +289,8 @@ const CheckoutPage = () => {
                       name="city"
                       value={formData.city}
                       onChange={handleInputChange}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        errors.city ? "border-red-500" : "border-gray-300"
-                      }`}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.city ? "border-red-500" : "border-gray-300"
+                        }`}
                     />
                     {errors.city && (
                       <p className="text-red-500 text-sm mt-1">{errors.city}</p>
@@ -315,9 +309,8 @@ const CheckoutPage = () => {
                       name="state"
                       value={formData.state}
                       onChange={handleInputChange}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        errors.state ? "border-red-500" : "border-gray-300"
-                      }`}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.state ? "border-red-500" : "border-gray-300"
+                        }`}
                     />
                     {errors.state && (
                       <p className="text-red-500 text-sm mt-1">
@@ -338,9 +331,8 @@ const CheckoutPage = () => {
                       name="zipCode"
                       value={formData.zipCode}
                       onChange={handleInputChange}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        errors.zipCode ? "border-red-500" : "border-gray-300"
-                      }`}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.zipCode ? "border-red-500" : "border-gray-300"
+                        }`}
                     />
                     {errors.zipCode && (
                       <p className="text-red-500 text-sm mt-1">
@@ -370,11 +362,10 @@ const CheckoutPage = () => {
                     name="cardholderName"
                     value={formData.cardholderName}
                     onChange={handleInputChange}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.cardholderName
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.cardholderName
                         ? "border-red-500"
                         : "border-gray-300"
-                    }`}
+                      }`}
                   />
                   {errors.cardholderName && (
                     <p className="text-red-500 text-sm mt-1">
@@ -396,9 +387,8 @@ const CheckoutPage = () => {
                     value={formData.cardNumber}
                     onChange={handleInputChange}
                     placeholder="1234 5678 9012 3456"
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.cardNumber ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.cardNumber ? "border-red-500" : "border-gray-300"
+                      }`}
                   />
                   {errors.cardNumber && (
                     <p className="text-red-500 text-sm mt-1">
@@ -421,9 +411,8 @@ const CheckoutPage = () => {
                       value={formData.expiryDate}
                       onChange={handleInputChange}
                       placeholder="MM/AA"
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        errors.expiryDate ? "border-red-500" : "border-gray-300"
-                      }`}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.expiryDate ? "border-red-500" : "border-gray-300"
+                        }`}
                     />
                     {errors.expiryDate && (
                       <p className="text-red-500 text-sm mt-1">
@@ -445,9 +434,8 @@ const CheckoutPage = () => {
                       value={formData.cvv}
                       onChange={handleInputChange}
                       placeholder="123"
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        errors.cvv ? "border-red-500" : "border-gray-300"
-                      }`}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.cvv ? "border-red-500" : "border-gray-300"
+                        }`}
                     />
                     {errors.cvv && (
                       <p className="text-red-500 text-sm mt-1">{errors.cvv}</p>
@@ -515,7 +503,7 @@ const CheckoutPage = () => {
                   Total
                 </span>
                 <span className="text-lg font-semibold text-gray-900">
-                  R$ {(getCartTotal() * 1.08).toFixed(2)}
+                  R$ {getCartTotal().toFixed(2)}
                 </span>
               </div>
             </div>
@@ -535,12 +523,6 @@ const CheckoutPage = () => {
                 "Finalizar Pedido"
               )}
             </button>
-            <div className="mt-4 text-xs text-gray-500 text-center">
-              <p>
-                Ao finalizar seu pedido, você concorda com nossos Termos de
-                Serviço e Política de Privacidade.
-              </p>
-            </div>
           </div>
         </div>
       </div>

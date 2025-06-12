@@ -31,7 +31,6 @@ const ResetPasswordPage = () => {
       [name]: value,
     }));
 
-    // Clear error when user starts typing
     if (error) {
       setError("");
     }

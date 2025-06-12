@@ -14,7 +14,6 @@ const OrderConfirmationPage = () => {
       try {
         setLoading(true);
         const response = await orderService.getById(orderId);
-        console.log("Order response:", response);
         setOrder(response.data);
       } catch (err) {
         setError("Falha ao carregar detalhes do pedido");
@@ -80,7 +79,7 @@ const OrderConfirmationPage = () => {
             </svg>
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Pedido Confirmado!
+            Pedido Enviado!
           </h1>
           <p className="text-gray-600">
             Obrigado pela sua compra. Seu pedido foi realizado com sucesso.
@@ -103,29 +102,6 @@ const OrderConfirmationPage = () => {
                 })}
               </p>
             </div>
-            <span
-              className={`px-3 py-1 rounded-full text-sm font-medium ${
-                order.status === "Pending"
-                  ? "bg-yellow-100 text-yellow-800"
-                  : order.status === "Processing"
-                  ? "bg-blue-100 text-blue-800"
-                  : order.status === "Shipped"
-                  ? "bg-purple-100 text-purple-800"
-                  : order.status === "Delivered"
-                  ? "bg-green-100 text-green-800"
-                  : "bg-gray-100 text-gray-800"
-              }`}
-            >
-              {order.status === "Pending"
-                ? "Pendente"
-                : order.status === "Processing"
-                ? "Processando"
-                : order.status === "Shipped"
-                ? "Enviado"
-                : order.status === "Delivered"
-                ? "Entregue"
-                : order.status}
-            </span>
           </div>
           <div className="border-t pt-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">

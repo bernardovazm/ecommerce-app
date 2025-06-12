@@ -4,6 +4,8 @@ using Ecommerce.Infrastructure.Data;
 using Ecommerce.Infrastructure.Auth;
 using Ecommerce.Infrastructure.Email;
 using Ecommerce.Infrastructure.Messaging;
+using Ecommerce.Infrastructure.Payments.Pagarme;
+using Ecommerce.Infrastructure.Payments.Pagarme.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,9 +33,13 @@ public static class DependencyInjection
         services.AddScoped<IPasswordService, PasswordService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IPasswordResetService, PasswordResetService>();
-        
-        // Email Services
+          // Email Services
         services.AddScoped<IEmailService, SmtpEmailService>();
+
+        // Payment Services
+        services.Configure<PagarmeSettings>(configuration.GetSection(PagarmeSettings.SectionName));
+        services.AddHttpClient<IPagarmeClient, PagarmeClient>();
+        services.AddScoped<IPagarmeClient, PagarmeClient>();
 
         // Messaging Services
         services.AddSingleton<IMessagePublisher, RabbitMQPublisher>();

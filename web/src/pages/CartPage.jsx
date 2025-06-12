@@ -210,7 +210,7 @@ const CartPage = () => {
         <div className="lg:col-span-1">
           <div className="bg-white rounded-lg shadow-sm border p-6 sticky top-4">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Resumo do Pedido
+              Resumo do Carrinho
             </h2>
             <div className="space-y-3 mb-6">
               <div className="flex justify-between">
@@ -219,65 +219,19 @@ const CartPage = () => {
                   R$ {getCartTotal().toFixed(2)}
                 </span>
               </div>
-              <div className="border-t pt-3">
-                <div className="flex justify-between">
-                  <span className="text-lg font-semibold text-gray-900">
-                    Total
-                  </span>
-                  <span className="text-lg font-semibold text-gray-900">
-                    R$ {getCartTotal().toFixed(2)}
-                  </span>
-                </div>
-              </div>
             </div>
             <button
               onClick={handleCheckout}
               className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors mb-4"
             >
-              Finalizar Compra
+              Continuar Compra
             </button>
             <button
               onClick={() => navigate("/products")}
               className="w-full border border-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors"
             >
-              Continuar Comprando
+              Adicionar Produtos
             </button>
-            <div className="mt-6 pt-6 border-t">
-              <div className="flex items-center justify-center space-x-4 text-xs text-gray-500">
-                <div className="flex items-center">
-                  <svg
-                    className="w-4 h-4 mr-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                    />
-                  </svg>
-                  Checkout Seguro
-                </div>
-                <div className="flex items-center">
-                  <svg
-                    className="w-4 h-4 mr-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  Protegido
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

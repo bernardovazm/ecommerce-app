@@ -1,0 +1,162 @@
+### integração com pagar.me - testes
+
+### 1. pega cartões de teste disponíveis
+GET http://localhost:7000/api/payment/test-cards
+Accept: application/json
+
+###
+
+### 2. simular pagamento aprovado
+POST http://localhost:7000/api/payment/test-direct
+Content-Type: application/json
+
+{
+  "amount": 100.00,
+  "customerName": "João Silva",
+  "customerEmail": "joao.silva@test.com",
+  "cardNumber": "4111111111111111",
+  "cardHolderName": "João Silva",
+  "expirationDate": "1225",
+  "cvv": "123",
+  "scenario": "approved"
+}
+
+###
+
+### 3. simular pagamento recusado
+POST http://localhost:7000/api/payment/test-direct
+Content-Type: application/json
+
+{
+  "amount": 50.00,
+  "customerName": "Maria Santos",
+  "customerEmail": "maria.santos@test.com",
+  "cardNumber": "4000000000000002",
+  "cardHolderName": "Maria Santos",
+  "expirationDate": "1225",
+  "cvv": "123",
+  "scenario": "declined"
+}
+
+###
+
+### 4. simular erro de processamento
+POST http://localhost:7000/api/payment/test-direct
+Content-Type: application/json
+
+{
+  "amount": 75.50,
+  "customerName": "Pedro Costa",
+  "customerEmail": "pedro.costa@test.com",
+  "cardNumber": "4000000000000119",
+  "cardHolderName": "Pedro Costa",
+  "expirationDate": "1225",
+  "cvv": "123",
+  "scenario": "processing_error"
+}
+
+###
+
+### 5. simular saldo insuficiente
+POST http://localhost:7000/api/payment/test-direct
+Content-Type: application/json
+
+{
+  "amount": 200.00,
+  "customerName": "Ana Costa",
+  "customerEmail": "ana.costa@test.com",
+  "cardNumber": "4000000000000341",
+  "cardHolderName": "Ana Costa",
+  "expirationDate": "1225",
+  "cvv": "123",
+  "scenario": "insufficient_funds"
+}
+
+###
+
+### 6. consultar uma transação (troque {transactionId} pelo id real)
+GET http://localhost:7000/api/payment/transaction/12345
+Accept: application/json
+
+###
+
+### 7. simular pagamento assíncrono (via fila)
+POST http://localhost:7000/api/payment/test-async
+Content-Type: application/json
+
+{
+  "orderId": "550e8400-e29b-41d4-a716-446655440000",
+  "amount": 99.99,
+  "paymentMethod": "credit_card",
+  "customerEmail": "async.test@example.com"
+}
+
+###
+
+### 8. consultar pagamento assíncrono específico
+GET http://localhost:7000/api/payment/requests/550e8400-e29b-41d4-a716-446655440000
+Accept: application/json
+
+###
+
+### 9. listar pagamentos pendentes
+GET http://localhost:7000/api/payment/requests
+Accept: application/json
+
+###
+
+### 10. processar pagamento de um pedido existente
+POST http://localhost:7000/api/orders/550e8400-e29b-41d4-a716-446655440000/process-payment
+Content-Type: application/json
+
+{
+  "paymentMethod": "credit_card",
+  "customerEmail": "customer@example.com"
+}
+
+###
+
+### testes completos de integração
+
+### 11. criar cliente de teste
+POST http://localhost:7000/api/auth/register
+Content-Type: application/json
+
+{
+  "firstName": "Test",
+  "lastName": "Customer",
+  "email": "test.customer@pagarme.com",
+  "password": "Test123!",
+  "phone": "11999999999",
+  "shippingAddress": "Rua Test, 123 - São Paulo - SP"
+}
+
+###
+
+### 12. fazer login
+POST http://localhost:7000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test.customer@pagarme.com",
+  "password": "Test123!"
+}
+
+###
+
+### 13. criar pedido (use o token do login)
+POST http://localhost:7000/api/orders
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "items": [
+    {
+      "productId": "{{productId}}",
+      "quantity": 2,
+      "unitPrice": 50.00
+    }
+  ]
+}
+
+###
