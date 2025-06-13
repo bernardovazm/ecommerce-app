@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import { authService } from "../services/api";
+import { authService, orderService } from "../services/api";
 import { ShoppingBagIcon, CalendarIcon, DollarSignIcon } from "lucide-react";
 
 const ProfilePage = () => {
@@ -135,21 +135,19 @@ const ProfilePage = () => {
             <nav className="-mb-px flex space-x-8 px-6">
               <button
                 onClick={() => setActiveTab("profile")}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === "profile"
-                    ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === "profile"
+                  ? "border-blue-500 text-blue-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }`}
               >
                 Perfil
               </button>
               <button
                 onClick={() => setActiveTab("orders")}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === "orders"
-                    ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === "orders"
+                  ? "border-blue-500 text-blue-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }`}
               >
                 Pedidos
                 {profile?.totalOrders > 0 && (
@@ -391,23 +389,22 @@ const ProfilePage = () => {
                               R$ {order.total?.toFixed(2)}
                             </p>
                             <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                order.status === "Completed"
-                                  ? "bg-green-100 text-green-800"
-                                  : order.status === "Processing"
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${order.status === "Completed"
+                                ? "bg-green-100 text-green-800"
+                                : order.status === "Processing"
                                   ? "bg-blue-100 text-blue-800"
                                   : order.status === "Cancelled"
-                                  ? "bg-red-100 text-red-800"
-                                  : "bg-gray-100 text-gray-800"
-                              }`}
+                                    ? "bg-red-100 text-red-800"
+                                    : "bg-gray-100 text-gray-800"
+                                }`}
                             >
                               {order.status === "Completed"
                                 ? "Finalizado"
                                 : order.status === "Processing"
-                                ? "Processando"
-                                : order.status === "Cancelled"
-                                ? "Cancelado"
-                                : "Pendente"}
+                                  ? "Processando"
+                                  : order.status === "Cancelled"
+                                    ? "Cancelado"
+                                    : "Pendente"}
                             </span>
                           </div>
                         </div>

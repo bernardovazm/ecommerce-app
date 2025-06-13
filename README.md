@@ -28,10 +28,8 @@ DevOps
 Instale o Docker, clone o repositório e execute os comandos abaixo:
 
 ```bash
-# crie o arquivo env e configure variáveis de ambiente
-cp .env.example .env
-# inicie os containers na raiz do projeto
-docker compose up --build
+# configure variáveis de ambiente e inicie os containers na raiz do projeto
+cp .env.example .env && docker compose up --build
 # frontend http://localhost:5173
 # swagger http://localhost:7000/swagger
 ```

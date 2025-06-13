@@ -59,6 +59,13 @@ export const orderService = {
   getByCustomer: (customerId) => api.get(`/orders/customer/${customerId}`),
 };
 
+export const shippingService = {
+  calculateShipping: (shippingData) =>
+    api.post("/shipping/calculate", shippingData),
+  validateZipCode: (zipCode) =>
+    api.get(`/shipping/zip-code/${zipCode}/validate`),
+};
+
 export const authService = {
   login: (credentials) => api.post("/auth/login", credentials),
   register: (userData) => api.post("/auth/register", userData),

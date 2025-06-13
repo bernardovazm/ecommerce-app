@@ -6,6 +6,7 @@ using Ecommerce.Infrastructure.Email;
 using Ecommerce.Infrastructure.Messaging;
 using Ecommerce.Infrastructure.Payments.Pagarme;
 using Ecommerce.Infrastructure.Payments.Pagarme.Configuration;
+using Ecommerce.Infrastructure.Shipping;
 using Ecommerce.Application.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -42,6 +43,11 @@ public static class DependencyInjection
     services.Configure<PagarmeSettings>(configuration.GetSection(PagarmeSettings.SectionName));
     services.AddHttpClient<IPagarmeClient, PagarmeClient>();
     services.AddScoped<IPagarmeClient, PagarmeClient>();
+
+    // Shipping
+    services.AddHttpClient<IShippingService, CorreiosShippingService>();
+    services.AddScoped<IShippingService, CorreiosShippingService>();
+    services.AddScoped<IShippingCalculationService, ShippingCalculationService>();
 
     // Messaging
     services.AddSingleton<IMessagePublisher, RabbitMQPublisher>();

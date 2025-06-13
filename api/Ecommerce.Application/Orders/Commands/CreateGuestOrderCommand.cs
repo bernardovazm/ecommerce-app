@@ -8,7 +8,10 @@ public record CreateGuestOrderCommand(
     string CustomerName,
     string CustomerEmail,
     string ShippingAddress,
-    List<OrderItemDto> Items
+    List<OrderItemDto> Items,
+    decimal ShippingCost = 0,
+    string? ShippingService = null,
+    int? ShippingDays = null
 ) : IRequest<Guid>;
 
 public class CreateGuestOrderCommandHandler : IRequestHandler<CreateGuestOrderCommand, Guid>
@@ -43,13 +46,14 @@ public class CreateGuestOrderCommandHandler : IRequestHandler<CreateGuestOrderCo
             customer = existingCustomer;
         }
 
-        var order = new Order(customer.Id);
-
-        foreach (var itemDto in request.Items)
+        var order = new Order(customer.Id); foreach (var itemDto in request.Items)
         {
             var orderItem = new OrderItem(itemDto.ProductId, itemDto.UnitPrice, itemDto.Quantity);
             order.AddItem(orderItem);
         }
+
+        // Set shipping information
+        order.SetShippingInfo(request.ShippingCost, request.ShippingAddress, request.ShippingService, request.ShippingDays);
 
         await _orderRepository.AddAsync(order);
         await _orderRepository.SaveChangesAsync();

@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import { orderService } from "../services/api";
+import { orderService, shippingService } from "../services/api";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const { cartItems, getCartTotal, getCartItemsCount, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
+  const [shippingOptions, setShippingOptions] = useState([]);
+  const [selectedShipping, setSelectedShipping] = useState(null);
+  const [shippingLoading, setShippingLoading] = useState(false);
+  const [shippingCalculated, setShippingCalculated] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -24,6 +28,25 @@ const CheckoutPage = () => {
     notes: "",
   });
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const cleanZip = formData.zipCode.replace(/\D/g, "");
+    if (cleanZip.length === 8) {
+      calculateShipping();
+    } else {
+      setShippingOptions([]);
+      setSelectedShipping(null);
+      setShippingCalculated(false);
+    }
+  }, [formData.zipCode]);
+
+  const getShippingCost = () => {
+    return selectedShipping?.price || 0;
+  };
+
+  const getFinalTotal = () => {
+    return getCartTotal() + getShippingCost();
+  };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -37,6 +60,49 @@ const CheckoutPage = () => {
       }));
     }
   };
+  const calculateShipping = async () => {
+    if (!formData.zipCode || formData.zipCode.length < 8) {
+      alert("Por favor, preencha o CEP corretamente (8 dígitos)");
+      return;
+    }
+
+    setShippingLoading(true);
+    setShippingOptions([]);
+    setSelectedShipping(null);
+    setShippingCalculated(false);
+
+    try {
+      const shippingData = {
+        productIds: cartItems.map((item) => item.product.id),
+        quantities: cartItems.map((item) => item.quantity),
+        destinationZipCode: formData.zipCode.replace(/\D/g, ""),
+      };
+
+      const response = await shippingService.calculateShipping(shippingData);
+
+      if (response.data.success) {
+        setShippingOptions(response.data.options);
+        setShippingCalculated(true);
+        if (response.data.options.length > 0) {
+          setSelectedShipping(response.data.options[0]);
+        }
+      } else {
+        alert("Erro ao calcular frete: " + (response.data.error || "Erro desconhecido"));
+        setShippingCalculated(false);
+      }
+    } catch (error) {
+      console.error("Erro ao calcular frete:", error);
+      alert("Erro ao calcular o frete. Verifique o CEP e tente novamente.");
+      setShippingCalculated(false);
+    } finally {
+      setShippingLoading(false);
+    }
+  };
+
+  const handleShippingSelection = (option) => {
+    setSelectedShipping(option);
+  };
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -95,9 +161,12 @@ const CheckoutPage = () => {
     if (cartItems.length === 0) {
       alert("Seu carrinho está vazio");
       return;
+    } if (!validateForm()) {
+      return;
     }
 
-    if (!validateForm()) {
+    if (!shippingCalculated || !selectedShipping) {
+      alert("Por favor, calcule e selecione uma opção de frete antes de finalizar o pedido");
       return;
     }
 
@@ -112,6 +181,9 @@ const CheckoutPage = () => {
           quantity: item.quantity,
           unitPrice: item.product.price,
         })),
+        shippingCost: selectedShipping.price,
+        shippingService: selectedShipping.serviceName,
+        shippingDays: selectedShipping.deliveryDays
       };
 
       const response = await orderService.createGuest(orderData);
@@ -155,7 +227,7 @@ const CheckoutPage = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-8" id="checkout-form">
             <div className="bg-white rounded-lg shadow-sm border p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
                 Informações do Cliente
@@ -325,24 +397,75 @@ const CheckoutPage = () => {
                     >
                       CEP *
                     </label>
-                    <input
-                      type="text"
-                      id="zipCode"
-                      name="zipCode"
-                      value={formData.zipCode}
-                      onChange={handleInputChange}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.zipCode ? "border-red-500" : "border-gray-300"
-                        }`}
-                    />
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        id="zipCode"
+                        name="zipCode"
+                        value={formData.zipCode}
+                        onChange={handleInputChange}
+                        placeholder="00000-000"
+                        className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.zipCode ? "border-red-500" : "border-gray-300"
+                          }`}
+                      />
+                    </div>
                     {errors.zipCode && (
                       <p className="text-red-500 text-sm mt-1">
                         {errors.zipCode}
-                      </p>
-                    )}
+                      </p>)}
                   </div>
                 </div>
               </div>
             </div>
+
+            {shippingCalculated && shippingOptions.length > 0 && (
+              <div className="bg-white rounded-lg shadow-sm border p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  Opções de Frete
+                </h2>
+                <div className="space-y-3">
+                  {shippingOptions.map((option, index) => (
+                    <div
+                      key={index}
+                      className={`p-3 border rounded-lg cursor-pointer transition-colors ${selectedShipping?.serviceCode === option.serviceCode
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-300 hover:border-gray-400"
+                        }`}
+                      onClick={() => handleShippingSelection(option)}
+                    >
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="font-medium text-gray-900">
+                            {option.serviceName}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Entrega entre {option.deliveryDays} dia{option.deliveryDays > 1 ? 's' : ''} út{option.deliveryDays > 1 ? 'eis' : 'il'}
+                          </p>
+                          {option.observations && (
+                            <p className="text-xs text-gray-500 mt-1">
+                              {option.observations}
+                            </p>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <p className="font-semibold text-gray-900">
+                            R$ {option.price.toFixed(2)}
+                          </p>
+                          <div className={`w-4 h-4 rounded-full border-2 ml-auto mt-1 ${selectedShipping?.serviceCode === option.serviceCode
+                            ? "border-blue-500 bg-blue-500"
+                            : "border-gray-300"
+                            }`}>
+                            {selectedShipping?.serviceCode === option.serviceCode && (
+                              <div className="w-2 h-2 bg-white rounded-full mx-auto mt-0.5"></div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="bg-white rounded-lg shadow-sm border p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
@@ -363,8 +486,8 @@ const CheckoutPage = () => {
                     value={formData.cardholderName}
                     onChange={handleInputChange}
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.cardholderName
-                        ? "border-red-500"
-                        : "border-gray-300"
+                      ? "border-red-500"
+                      : "border-gray-300"
                       }`}
                   />
                   {errors.cardholderName && (
@@ -496,14 +619,21 @@ const CheckoutPage = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Frete</span>
-                <span className="font-medium">Grátis</span>
+                <span className="font-medium">
+                  {selectedShipping
+                    ? `R$ ${selectedShipping.price.toFixed(2)} - ${selectedShipping.serviceName}`
+                    : shippingCalculated
+                      ? "Selecione uma opção de entrega"
+                      : "Informe o CEP"}
+                </span>
               </div>
               <div className="flex justify-between pt-2 border-t">
                 <span className="text-lg font-semibold text-gray-900">
                   Total
                 </span>
                 <span className="text-lg font-semibold text-gray-900">
-                  R$ {getCartTotal().toFixed(2)}
+                  {!!selectedShipping ? `
+                  R$ ${getFinalTotal().toFixed(2)}` : "--"}
                 </span>
               </div>
             </div>

@@ -153,12 +153,10 @@ const OrderConfirmationPage = () => {
             </h2>
             <div className="text-gray-600">
               <p>{order.customer?.name}</p>
-              <p>{order.shippingAddress.address}</p>
+              <p>{order.shippingAddress}</p>
               <p>
-                {order.shippingAddress.city}, {order.shippingAddress.state}
-                {order.shippingAddress.zipCode}
+                Frete: R$ {order.shippingCost}
               </p>
-              <p>{order.shippingAddress.country}</p>
             </div>
           </div>
         )}
