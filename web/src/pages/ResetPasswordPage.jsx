@@ -89,7 +89,7 @@ const ResetPasswordPage = () => {
       } else {
         setError("Failed to reset password. Please try again.");
       }
-      alert("Reset password error:", err);
+      alert("Reset password error:" + err);
     } finally {
       setLoading(false);
     }

@@ -91,11 +91,39 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
+// DB init retry
+await InitializeDatabaseAsync(app.Services);
+
+async Task InitializeDatabaseAsync(IServiceProvider services)
 {
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    context.Database.EnsureCreated();
-    await DbSeeder.SeedAsync(context);
+    const int maxRetries = 30;
+    const int delayBetweenRetries = 2000;
+
+    for (int attempt = 1; attempt <= maxRetries; attempt++)
+    {
+        try
+        {
+            using var scope = services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            await context.Database.CanConnectAsync();
+            context.Database.EnsureCreated();
+            await DbSeeder.SeedAsync(context);
+            Console.WriteLine("Database initialized successfully.");
+            return;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Database initialization attempt {attempt}/{maxRetries} failed: {ex.Message}");
+
+            if (attempt == maxRetries)
+            {
+                Console.WriteLine("Failed to initialize database after all retry attempts.");
+                throw;
+            }
+            Console.WriteLine($"Retrying in {delayBetweenRetries / 1000} seconds...");
+            await Task.Delay(delayBetweenRetries);
+        }
+    }
 }
 
 if (app.Environment.IsDevelopment())

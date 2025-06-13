@@ -14,7 +14,7 @@ const HomePage = () => {
         const response = await productService.getFeatured();
         setFeaturedProducts(response.data);
       } catch (error) {
-        alert("Error fetching featured products:", error);
+        alert("Error fetching featured products:" + error);
       } finally {
         setLoading(false);
       }

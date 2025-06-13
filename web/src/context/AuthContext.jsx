@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
         return { success: true };
       }
     } catch (error) {
-      alert("Login failed:", error);
+      alert("Login failed:" + error);
       return {
         success: false,
         message:
@@ -87,7 +87,7 @@ export const AuthProvider = ({ children }) => {
         return { success: true };
       }
     } catch (error) {
-      alert("Registration failed:", error);
+      alert("Registration failed: " + error.response?.data?.message);
       return {
         success: false,
         message:

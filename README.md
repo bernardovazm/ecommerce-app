@@ -12,8 +12,8 @@ Aplicação full stack de loja virtual com .NET, React, PostgreSQL e Docker.
 
 ```bash
 # Configurar
-./scripts/setup.sh     # Linux/Mac
-scripts\setup.ps1      # Windows
+./scripts/setup.sh     # bash
+scripts\setup.ps1      # powershell
 
 # Iniciar containers
 docker compose up --build
@@ -26,10 +26,10 @@ docker compose up --build
 ### Testes e Setup
 
 ```bash
-./scripts/setup.sh     # Configuração inicial
-./scripts/build.sh     # Build completo
-./scripts/test.sh      # Executar testes
-./scripts/quality.sh   # Análise de qualidade
+./scripts/setup.sh
+./scripts/build.sh
+./scripts/test.shs
+./scripts/quality.sh
 ```
 
 ### Desenvolvimento

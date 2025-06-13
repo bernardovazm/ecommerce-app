@@ -37,7 +37,7 @@ const ProductDetailPage = () => {
       addToCart(product, quantity);
       alert("Produto adicionado ao carrinho!");
     } catch (err) {
-      alert("Error adding to cart:", err);
+      alert("Error adding to cart:" + err);
       alert("Falha ao adicionar produto ao carrinho");
     } finally {
       setAddingToCart(false);

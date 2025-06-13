@@ -72,8 +72,8 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validateForm()) return;    // eslint-disable-next-line no-unused-vars
+    if (!validateForm()) return;
+    // eslint-disable-next-line no-unused-vars
     const { confirmPassword, ...registrationData } = formData;
     const result = await register(registrationData);
 
@@ -92,7 +92,7 @@ const RegisterPage = () => {
             Crie sua conta
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Ou
+            Ou {" "}
             <Link
               to="/login"
               className="font-medium text-blue-600 hover:text-blue-500"

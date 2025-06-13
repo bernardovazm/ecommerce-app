@@ -24,19 +24,6 @@ const ProductListPage = () => {
   useEffect(() => {
     fetchCategories();
   }, []);
-
-  useEffect(() => {
-    fetchProducts();
-  }, [currentPage, selectedCategory, searchTerm, fetchProducts]);
-
-  const fetchCategories = async () => {
-    try {
-      const response = await categoryService.getAll();
-      setCategories(response.data);
-    } catch (error) {
-      alert("Error fetching categories:", error);
-    }
-  };
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
@@ -49,11 +36,24 @@ const ProductListPage = () => {
       setProducts(response.data.products);
       setTotalCount(response.data.totalCount);
     } catch (error) {
-      alert("Error fetching products:", error);
+      alert("Error fetching products:" + error);
     } finally {
       setLoading(false);
     }
   }, [searchTerm, selectedCategory, currentPage, pageSize]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [currentPage, selectedCategory, searchTerm, fetchProducts]);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await categoryService.getAll();
+      setCategories(response.data);
+    } catch (error) {
+      alert("Error fetching categories:" + error);
+    }
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();

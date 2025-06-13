@@ -33,7 +33,7 @@ const ForgotPasswordPage = () => {
       } else {
         setError("Falha ao enviar email de redefinição. Tente novamente.");
       }
-      alert("Forgot password error:", err);
+      alert("Forgot password error:" + err);
     } finally {
       setLoading(false);
     }

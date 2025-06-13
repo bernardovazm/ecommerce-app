@@ -17,7 +17,7 @@ const OrderConfirmationPage = () => {
         setOrder(response.data);
       } catch (err) {
         setError("Falha ao carregar detalhes do pedido");
-        alert("Error fetching order:", err);
+        alert("Error fetching order:" + err);
       } finally {
         setLoading(false);
       }
