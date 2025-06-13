@@ -37,7 +37,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__Default=Host=db;Port=5432;Database=ecommerce;Username=postgres;Password=postgres
       - ConnectionStrings__RabbitMQ=rabbitmq
-      - JWT_SECRET_KEY=development-secret-key
+      - JWT_SECRET_KEY=example-development-secret-key-sample
     ports:
       - "7000:8080"
     depends_on:

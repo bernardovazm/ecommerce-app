@@ -8,7 +8,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Product> Products => Set<Product>();
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Order> Orders => Set<Order>();
-    public DbSet<OrderItem> OrderItems => Set<OrderItem>(); public DbSet<User> Users => Set<User>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    public DbSet<User> Users => Set<User>();
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<PaymentRequest> PaymentRequests => Set<PaymentRequest>();
@@ -33,7 +34,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             e.HasKey(c => c.Id);
             e.Property(c => c.Name).IsRequired().HasMaxLength(100);
-        }); modelBuilder.Entity<User>(e =>
+        });
+
+        modelBuilder.Entity<User>(e =>
         {
             e.HasKey(u => u.Id);
             e.Property(u => u.Email).IsRequired().HasMaxLength(255);
@@ -42,7 +45,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.Property(u => u.LastName).IsRequired().HasMaxLength(100);
             e.Property(u => u.Role).HasConversion<int>();
             e.HasIndex(u => u.Email).IsUnique();
-        }); modelBuilder.Entity<Customer>(e =>
+        });
+
+        modelBuilder.Entity<Customer>(e =>
         {
             e.Property(c => c.Phone).HasMaxLength(20);
             e.Property(c => c.ShippingAddress).HasMaxLength(500);

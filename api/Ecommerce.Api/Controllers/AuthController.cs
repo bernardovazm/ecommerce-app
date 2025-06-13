@@ -17,43 +17,57 @@ public class AuthController : ControllerBase
     {
         _mediator = mediator;
     }
-
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterCommand command)
     {
-        var result = await _mediator.Send(command);
-
-        if (!result.IsSuccess)
+        try
         {
-            return BadRequest(new { message = result.ErrorMessage });
+            var result = await _mediator.Send(command);
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(new { message = result.ErrorMessage });
+            }
+
+            return Ok(new
+            {
+                token = result.Token,
+                refreshToken = result.RefreshToken,
+                expiresAt = result.ExpiresAt,
+                message = "Registration successful"
+            });
         }
-
-        return Ok(new
+        catch (Exception ex)
         {
-            token = result.Token,
-            refreshToken = result.RefreshToken,
-            expiresAt = result.ExpiresAt,
-            message = "Registration successful"
-        });
+            // Log the exception here if you have a logger
+            return StatusCode(500, new { message = "An internal server error occurred", details = ex.Message });
+        }
     }
-
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginCommand command)
     {
-        var result = await _mediator.Send(command);
-
-        if (!result.IsSuccess)
+        try
         {
-            return BadRequest(new { message = result.ErrorMessage });
+            var result = await _mediator.Send(command);
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(new { message = result.ErrorMessage });
+            }
+
+            return Ok(new
+            {
+                token = result.Token,
+                refreshToken = result.RefreshToken,
+                expiresAt = result.ExpiresAt,
+                message = "Login successful"
+            });
         }
-
-        return Ok(new
+        catch (Exception ex)
         {
-            token = result.Token,
-            refreshToken = result.RefreshToken,
-            expiresAt = result.ExpiresAt,
-            message = "Login successful"
-        });
+            // Log the exception here if you have a logger
+            return StatusCode(500, new { message = "An internal server error occurred", details = ex.Message });
+        }
     }
 
     [HttpGet("profile")]

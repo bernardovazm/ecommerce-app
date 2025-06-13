@@ -36,7 +36,9 @@ public class UserRepository : IUserRepository
         return await _context.Customers
             .Include(c => c.Orders)
             .FirstOrDefaultAsync(c => c.Email == email.ToLowerInvariant());
-    }    public Task<User> AddAsync(User user)
+    }
+
+    public Task<User> AddAsync(User user)
     {
         _context.Users.Add(user);
         return Task.FromResult(user);

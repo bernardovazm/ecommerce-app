@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ShoppingCart, Search, Menu, User, LogOut } from "lucide-react";
+import { ShoppingCart, Menu, User, LogOut } from "lucide-react";
 import { useCart } from "../hooks/useCart";
 import { useAuth } from "../hooks/useAuth";
 import { useState, useEffect, useRef } from "react";
@@ -47,14 +47,6 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center space-x-4">
-            <div className="hidden sm:flex items-center bg-gray-100 rounded-lg px-3 py-2">
-              <Search className="h-4 w-4 text-gray-400 mr-2" />
-              <input
-                type="text"
-                placeholder="Buscar produtos..."
-                className="bg-transparent border-none outline-none text-sm w-40"
-              />
-            </div>
             <Link
               to="/cart"
               className="relative p-2 text-gray-600 hover:text-blue-600 transition-colors"

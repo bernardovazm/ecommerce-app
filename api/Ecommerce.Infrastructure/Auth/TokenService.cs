@@ -12,11 +12,13 @@ namespace Ecommerce.Infrastructure.Auth;
 public class TokenService : ITokenService
 {
     private readonly IConfiguration _configuration;
-    private readonly SymmetricSecurityKey _key;    public TokenService(IConfiguration configuration)
+    private readonly SymmetricSecurityKey _key;
+
+    public TokenService(IConfiguration configuration)
     {
         _configuration = configuration;
-        var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") 
-            ?? _configuration["Jwt:SecretKey"] 
+        var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY")
+            ?? _configuration["Jwt:SecretKey"]
             ?? throw new InvalidOperationException("JWT SecretKey not configured. Set JWT_SECRET_KEY environment variable or configure Jwt:SecretKey");
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
     }
@@ -61,7 +63,7 @@ public class TokenService : ITokenService
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var validationParameters = GetTokenValidationParameters();
-            
+
             tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
             return true;
         }
@@ -77,7 +79,7 @@ public class TokenService : ITokenService
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwt = tokenHandler.ReadJwtToken(token);
-            
+
             var userIdClaim = jwt.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
             return userIdClaim != null ? Guid.Parse(userIdClaim.Value) : null;
         }
