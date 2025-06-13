@@ -19,7 +19,6 @@ public class PaymentMockController : ControllerBase
     {
         _logger.LogInformation("Simulating Pagar.me payment for amount: {Amount}", request.Amount);
 
-        // Simulate different scenarios based on card number
         var response = request.CardNumber switch
         {
             "4111111111111111" => SimulateApprovedPayment(request),
@@ -94,7 +93,7 @@ public class PaymentMockController : ControllerBase
             {
                 id = request.TransactionId,
                 status = request.NewStatus,
-                amount = request.Amount * 100, // Convert to cents
+                amount = request.Amount * 100,
                 paid_amount = request.NewStatus == "paid" ? request.Amount * 100 : 0,
                 authorization_code = request.NewStatus == "paid" ? "123456" : null,
                 tid = Random.Shared.Next(100000, 999999),

@@ -50,7 +50,6 @@ public class PagarmePaymentService : IPaymentService
 
     private PagarmeTransactionRequest CreateTransactionRequest(Order order)
     {
-        // Convert amount to cents (Pagar.me uses cents)
         var amountInCents = (int)(order.Total * 100);
 
         var request = new PagarmeTransactionRequest
@@ -62,7 +61,7 @@ public class PagarmePaymentService : IPaymentService
             SoftDescriptor = "ECOMMERCE",
             Customer = CreateCustomer(order),
             Items = CreateItems(order),
-            CardData = GetTestCardData(), // Using test card for sandbox
+            CardData = GetTestCardData(),
             Metadata = new Dictionary<string, string>
             {
                 { "order_id", order.Id.ToString() },
@@ -88,7 +87,7 @@ public class PagarmePaymentService : IPaymentService
                 new PagarmeDocument
                 {
                     Type = "cpf",
-                    Number = "11111111111" // Test CPF
+                    Number = "11111111111"
                 }
             },
             Phones = new List<PagarmePhone>
@@ -110,25 +109,23 @@ public class PagarmePaymentService : IPaymentService
         {
             Id = item.ProductId.ToString(),
             Title = item.Product?.Name ?? "Product",
-            UnitPrice = (int)(item.UnitPrice * 100), // Convert to cents
+            UnitPrice = (int)(item.UnitPrice * 100),
             Quantity = item.Quantity,
             Tangible = true
         }).ToList();
-    }    private PagarmeCardData GetTestCardData()
+    }
+    private PagarmeCardData GetTestCardData()
     {
-        // For sandbox environment, we'll use test cards
-        // In production, this would come from the payment form
         if (_settings.IsSandbox)
         {
-            // Simulate different scenarios based on random selection
             var random = new Random();
             var scenario = random.Next(1, 4);
-            
+
             var testCard = scenario switch
             {
-                1 => _settings.TestCards.Approved,  // 33% success
-                2 => _settings.TestCards.Declined,  // 33% declined
-                _ => _settings.TestCards.ProcessingError  // 33% processing error
+                1 => _settings.TestCards.Approved,
+                2 => _settings.TestCards.Declined,
+                _ => _settings.TestCards.ProcessingError
             };
 
             return new PagarmeCardData
@@ -140,7 +137,6 @@ public class PagarmePaymentService : IPaymentService
             };
         }
 
-        // In production, this should come from encrypted card data from frontend
         throw new InvalidOperationException("Card data must be provided for production environment");
     }
 
@@ -162,12 +158,12 @@ public class PagarmePaymentService : IPaymentService
                 _ => $"Payment failed with status: {response.Status}"
             };
 
-            _logger.LogWarning("Payment failed for transaction {TransactionId}: {Status} - {Reason}", 
+            _logger.LogWarning("Payment failed for transaction {TransactionId}: {Status} - {Reason}",
                 response.Id, response.Status, response.RefuseReason);
         }
         else
         {
-            _logger.LogInformation("Payment successful for transaction {TransactionId}: {Status}", 
+            _logger.LogInformation("Payment successful for transaction {TransactionId}: {Status}",
                 response.Id, response.Status);
         }
 

@@ -44,7 +44,7 @@ public class PaymentRequestRepository : IPaymentRequestRepository
     {
         return await _context.PaymentRequests
             .Where(pr => pr.Status == PaymentRequestStatus.Failed && pr.RetryCount < 3)
-            .Where(pr => pr.CreatedAt < DateTime.UtcNow.AddMinutes(-5)) // Wait 5 minutes before retry
+            .Where(pr => pr.CreatedAt < DateTime.UtcNow.AddMinutes(-5))
             .OrderBy(pr => pr.CreatedAt)
             .ToListAsync(cancellationToken);
     }

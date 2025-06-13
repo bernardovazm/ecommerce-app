@@ -1,6 +1,7 @@
 using Ecommerce.Domain.Entities;
 using Ecommerce.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
+using Ecommerce.Application.Services;
 
 namespace Ecommerce.Application.Orders.Commands;
 
@@ -17,6 +18,7 @@ public class ProcessOrderPaymentHandler
     private readonly IPaymentRequestRepository _paymentRequestRepository;
     private readonly IMessagePublisher _messagePublisher;
     private readonly IPaymentService _paymentService;
+    private readonly IOrderNotificationService _orderNotificationService;
     private readonly ILogger<ProcessOrderPaymentHandler> _logger;
 
     public ProcessOrderPaymentHandler(
@@ -24,12 +26,14 @@ public class ProcessOrderPaymentHandler
         IPaymentRequestRepository paymentRequestRepository,
         IMessagePublisher messagePublisher,
         IPaymentService paymentService,
+        IOrderNotificationService orderNotificationService,
         ILogger<ProcessOrderPaymentHandler> logger)
     {
         _orderRepository = orderRepository;
         _paymentRequestRepository = paymentRequestRepository;
         _messagePublisher = messagePublisher;
         _paymentService = paymentService;
+        _orderNotificationService = orderNotificationService;
         _logger = logger;
     }
 
@@ -45,20 +49,27 @@ public class ProcessOrderPaymentHandler
 
             _logger.LogInformation("Processing payment for order {OrderId}", command.OrderId);
 
-            // First, try direct payment
             try
             {
-                var directPaymentResult = await _paymentService.PayAsync(order, cancellationToken);
-                
-                if (directPaymentResult.Success)
+                var directPaymentResult = await _paymentService.PayAsync(order, cancellationToken); if (directPaymentResult.Success)
                 {
                     order.Confirm();
                     await _orderRepository.UpdateAsync(order, cancellationToken);
-                    
+
+                    try
+                    {
+                        await _orderNotificationService.SendOrderConfirmationEmailAsync(order, cancellationToken);
+                        _logger.LogInformation("Order confirmation email sent for order {OrderId}", command.OrderId);
+                    }
+                    catch (Exception emailEx)
+                    {
+                        _logger.LogError(emailEx, "Failed to send order confirmation email for order {OrderId}", command.OrderId);
+                    }
+
                     _logger.LogInformation("Direct payment successful for order {OrderId}", command.OrderId);
                     return ProcessOrderPaymentResult.Success("Payment processed successfully", directPaymentResult.GatewayId);
                 }
-                
+
                 _logger.LogWarning("Direct payment failed for order {OrderId}: {Error}", command.OrderId, directPaymentResult.Error);
             }
             catch (Exception ex)
@@ -66,7 +77,6 @@ public class ProcessOrderPaymentHandler
                 _logger.LogWarning(ex, "Direct payment failed for order {OrderId}, falling back to async processing", command.OrderId);
             }
 
-            // If direct payment fails, create async payment request
             var paymentRequest = new PaymentRequest(
                 command.OrderId,
                 order.Total,
@@ -76,14 +86,12 @@ public class ProcessOrderPaymentHandler
 
             await _paymentRequestRepository.CreateAsync(paymentRequest, cancellationToken);
 
-            // Update order status
             order.MarkPaymentPending();
             await _orderRepository.UpdateAsync(order, cancellationToken);
 
-            // Publish to message queue for async processing
             await _messagePublisher.PublishPaymentRequestAsync(paymentRequest.Id, cancellationToken);
 
-            _logger.LogInformation("Payment request queued for order {OrderId}, PaymentRequest {PaymentRequestId}", 
+            _logger.LogInformation("Payment request queued for order {OrderId}, PaymentRequest {PaymentRequestId}",
                 command.OrderId, paymentRequest.Id);
 
             return ProcessOrderPaymentResult.Pending("Payment request has been queued for processing", paymentRequest.Id.ToString());
@@ -111,12 +119,12 @@ public class ProcessOrderPaymentResult
         Reference = reference;
     }
 
-    public static ProcessOrderPaymentResult Success(string message, string? reference = null) 
+    public static ProcessOrderPaymentResult Success(string message, string? reference = null)
         => new(true, false, message, reference);
-    
-    public static ProcessOrderPaymentResult Pending(string message, string? reference = null) 
+
+    public static ProcessOrderPaymentResult Pending(string message, string? reference = null)
         => new(false, true, message, reference);
-    
-    public static ProcessOrderPaymentResult Failure(string message) 
+
+    public static ProcessOrderPaymentResult Failure(string message)
         => new(false, false, message);
 }

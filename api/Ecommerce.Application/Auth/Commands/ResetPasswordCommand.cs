@@ -38,13 +38,12 @@ public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand,
 
         var hashedPassword = _passwordService.HashPassword(request.NewPassword);
         user.UpdatePassword(hashedPassword);
-        
+
         await _userRepository.UpdateAsync(user);
         await _userRepository.SaveChangesAsync();
-        
-        // Invalidate the reset token
+
         await _passwordResetService.InvalidateResetTokenAsync(request.Token);
-        
+
         return true;
     }
 }

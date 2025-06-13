@@ -14,7 +14,7 @@ public class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordComman
     private readonly IEmailService _emailService;
 
     public ForgotPasswordCommandHandler(
-        IUserRepository userRepository, 
+        IUserRepository userRepository,
         IPasswordResetService passwordResetService,
         IEmailService emailService)
     {
@@ -28,13 +28,11 @@ public class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordComman
         var user = await _userRepository.GetByEmailAsync(request.Email);
         if (user == null)
         {
-            // Don't reveal if user exists or not for security
             return true;
         }
 
         var resetToken = await _passwordResetService.GenerateResetTokenAsync(user.Id);
-        
-        // Send reset email
+
         var resetLink = $"http://localhost:5174/reset-password?token={resetToken}";
         var emailMessage = new EmailMessage
         {

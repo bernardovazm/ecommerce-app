@@ -22,7 +22,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Register([FromBody] RegisterCommand command)
     {
         var result = await _mediator.Send(command);
-        
+
         if (!result.IsSuccess)
         {
             return BadRequest(new { message = result.ErrorMessage });
@@ -41,7 +41,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginCommand command)
     {
         var result = await _mediator.Send(command);
-        
+
         if (!result.IsSuccess)
         {
             return BadRequest(new { message = result.ErrorMessage });
@@ -79,8 +79,6 @@ public class AuthController : ControllerBase
     [Authorize]
     public IActionResult Logout()
     {
-        // In a JWT implementation, logout is typically handled client-side
-        // by removing the token from storage
         return Ok(new { message = "Logout successful" });
     }
 
@@ -95,7 +93,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)
     {
         var result = await _mediator.Send(command);
-        
+
         if (!result)
         {
             return BadRequest(new { message = "Invalid or expired reset token" });

@@ -2,7 +2,7 @@ namespace Ecommerce.Infrastructure.Payments.Pagarme.Models;
 
 public class PagarmeTransactionRequest
 {
-    public int Amount { get; set; } // Amount in cents
+    public int Amount { get; set; }
     public string PaymentMethod { get; set; } = "credit_card";
     public PagarmeCardData? CardData { get; set; }
     public PagarmeCustomer Customer { get; set; } = new();
@@ -18,7 +18,7 @@ public class PagarmeCardData
 {
     public string Number { get; set; } = string.Empty;
     public string HolderName { get; set; } = string.Empty;
-    public string ExpirationDate { get; set; } = string.Empty; // MMYY format
+    public string ExpirationDate { get; set; } = string.Empty;
     public string Cvv { get; set; } = string.Empty;
 }
 
@@ -68,7 +68,7 @@ public class PagarmeItem
 {
     public string Id { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
-    public int UnitPrice { get; set; } // Amount in cents
+    public int UnitPrice { get; set; }
     public int Quantity { get; set; } = 1;
     public bool Tangible { get; set; } = true;
 }

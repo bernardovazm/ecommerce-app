@@ -10,7 +10,8 @@ namespace Ecommerce.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 public class PaymentController : ControllerBase
-{    private readonly IPaymentRequestRepository _paymentRequestRepository;
+{
+    private readonly IPaymentRequestRepository _paymentRequestRepository;
     private readonly IMessagePublisher _messagePublisher;
     private readonly IPagarmeClient _pagarmeClient;
     private readonly ILogger<PaymentController> _logger;
@@ -45,10 +46,11 @@ public class PaymentController : ControllerBase
 
             _logger.LogInformation("Test payment request created and queued: {PaymentRequestId}", paymentRequest.Id);
 
-            return Ok(new { 
-                success = true, 
+            return Ok(new
+            {
+                success = true,
                 paymentRequestId = paymentRequest.Id,
-                message = "Payment request has been queued for processing" 
+                message = "Payment request has been queued for processing"
             });
         }
         catch (Exception ex)
@@ -107,7 +109,8 @@ public class PaymentController : ControllerBase
                 status = pr.Status.ToString(),
                 retryCount = pr.RetryCount,
                 createdAt = pr.CreatedAt
-            }));        }
+            }));
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting pending payment requests");
@@ -124,7 +127,7 @@ public class PaymentController : ControllerBase
 
             var transactionRequest = new PagarmeTransactionRequest
             {
-                Amount = (int)(request.Amount * 100), // Convert to cents
+                Amount = (int)(request.Amount * 100),
                 PaymentMethod = "credit_card",
                 Capture = true,
                 Async = false,
@@ -240,7 +243,7 @@ public class PaymentController : ControllerBase
         try
         {
             var transaction = await _pagarmeClient.GetTransactionAsync(transactionId);
-            
+
             return Ok(new
             {
                 id = transaction.Id,

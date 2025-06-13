@@ -30,7 +30,7 @@ public class PagarmeClient : IPagarmeClient
         _httpClient = httpClient;
         _settings = settings.Value;
         _logger = logger;
-        
+
         _jsonOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
@@ -44,11 +44,10 @@ public class PagarmeClient : IPagarmeClient
     {
         _httpClient.BaseAddress = new Uri(_settings.BaseUrl);
         _httpClient.Timeout = TimeSpan.FromSeconds(_settings.TimeoutSeconds);
-        
-        // Add API key to headers
+
         var authValue = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_settings.ApiKey}:"));
         _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", authValue);
-        
+
         _httpClient.DefaultRequestHeaders.Add("User-Agent", "Ecommerce-App/1.0");
         _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
     }
@@ -58,21 +57,21 @@ public class PagarmeClient : IPagarmeClient
         try
         {
             _logger.LogInformation("Creating Pagar.me transaction for amount: {Amount}", request.Amount);
-            
+
             var json = JsonSerializer.Serialize(request, _jsonOptions);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            
+
             _logger.LogDebug("Pagar.me request payload: {Payload}", json);
-            
+
             var response = await _httpClient.PostAsync("/transactions", content, cancellationToken);
             var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
-            
+
             _logger.LogDebug("Pagar.me response: {Response}", responseContent);
-            
+
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Pagar.me API error: {StatusCode} - {Content}", response.StatusCode, responseContent);
-                
+
                 try
                 {
                     var errorResponse = JsonSerializer.Deserialize<PagarmeErrorResponse>(responseContent, _jsonOptions);
@@ -84,16 +83,16 @@ public class PagarmeClient : IPagarmeClient
                     throw new PagarmeException($"Pagar.me API error: {response.StatusCode} - {responseContent}", response.StatusCode);
                 }
             }
-            
+
             var transaction = JsonSerializer.Deserialize<PagarmeTransactionResponse>(responseContent, _jsonOptions);
             if (transaction == null)
             {
                 throw new PagarmeException("Failed to deserialize Pagar.me response");
             }
-            
-            _logger.LogInformation("Pagar.me transaction created successfully: {TransactionId} - Status: {Status}", 
+
+            _logger.LogInformation("Pagar.me transaction created successfully: {TransactionId} - Status: {Status}",
                 transaction.Id, transaction.Status);
-            
+
             return transaction;
         }
         catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)
@@ -122,22 +121,22 @@ public class PagarmeClient : IPagarmeClient
         try
         {
             _logger.LogInformation("Getting Pagar.me transaction: {TransactionId}", transactionId);
-            
+
             var response = await _httpClient.GetAsync($"/transactions/{transactionId}", cancellationToken);
             var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
-            
+
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Pagar.me API error getting transaction: {StatusCode} - {Content}", response.StatusCode, responseContent);
                 throw new PagarmeException($"Failed to get transaction: {response.StatusCode}", response.StatusCode);
             }
-            
+
             var transaction = JsonSerializer.Deserialize<PagarmeTransactionResponse>(responseContent, _jsonOptions);
             if (transaction == null)
             {
                 throw new PagarmeException("Failed to deserialize Pagar.me transaction response");
             }
-            
+
             return transaction;
         }
         catch (PagarmeException)
@@ -156,26 +155,26 @@ public class PagarmeClient : IPagarmeClient
         try
         {
             _logger.LogInformation("Capturing Pagar.me transaction: {TransactionId}, Amount: {Amount}", transactionId, amount);
-            
+
             var request = new { amount };
             var json = JsonSerializer.Serialize(request, _jsonOptions);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            
+
             var response = await _httpClient.PostAsync($"/transactions/{transactionId}/capture", content, cancellationToken);
             var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
-            
+
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Pagar.me API error capturing transaction: {StatusCode} - {Content}", response.StatusCode, responseContent);
                 throw new PagarmeException($"Failed to capture transaction: {response.StatusCode}", response.StatusCode);
             }
-            
+
             var transaction = JsonSerializer.Deserialize<PagarmeTransactionResponse>(responseContent, _jsonOptions);
             if (transaction == null)
             {
                 throw new PagarmeException("Failed to deserialize Pagar.me capture response");
             }
-            
+
             return transaction;
         }
         catch (PagarmeException)
@@ -194,26 +193,26 @@ public class PagarmeClient : IPagarmeClient
         try
         {
             _logger.LogInformation("Refunding Pagar.me transaction: {TransactionId}, Amount: {Amount}", transactionId, amount);
-            
+
             var request = new { amount };
             var json = JsonSerializer.Serialize(request, _jsonOptions);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            
+
             var response = await _httpClient.PostAsync($"/transactions/{transactionId}/refund", content, cancellationToken);
             var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
-            
+
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Pagar.me API error refunding transaction: {StatusCode} - {Content}", response.StatusCode, responseContent);
                 throw new PagarmeException($"Failed to refund transaction: {response.StatusCode}", response.StatusCode);
             }
-            
+
             var transaction = JsonSerializer.Deserialize<PagarmeTransactionResponse>(responseContent, _jsonOptions);
             if (transaction == null)
             {
                 throw new PagarmeException("Failed to deserialize Pagar.me refund response");
             }
-            
+
             return transaction;
         }
         catch (PagarmeException)

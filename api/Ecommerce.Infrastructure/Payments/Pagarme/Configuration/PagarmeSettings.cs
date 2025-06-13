@@ -3,14 +3,13 @@ namespace Ecommerce.Infrastructure.Payments.Pagarme.Configuration;
 public class PagarmeSettings
 {
     public const string SectionName = "Pagarme";
-    
+
     public string ApiKey { get; set; } = string.Empty;
     public string EncryptionKey { get; set; } = string.Empty;
     public string BaseUrl { get; set; } = "https://api.pagar.me/1";
     public bool IsSandbox { get; set; } = true;
     public int TimeoutSeconds { get; set; } = 30;
-    
-    // Test cards for sandbox environment
+
     public TestCards TestCards { get; set; } = new();
 }
 
@@ -23,7 +22,7 @@ public class TestCards
         ExpirationDate = "1225",
         Cvv = "123"
     };
-    
+
     public TestCard Declined { get; set; } = new()
     {
         Number = "4000000000000002",
@@ -31,7 +30,7 @@ public class TestCards
         ExpirationDate = "1225",
         Cvv = "123"
     };
-    
+
     public TestCard ProcessingError { get; set; } = new()
     {
         Number = "4000000000000119",

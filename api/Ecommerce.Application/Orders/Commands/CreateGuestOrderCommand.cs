@@ -5,9 +5,9 @@ using MediatR;
 namespace Ecommerce.Application.Orders.Commands;
 
 public record CreateGuestOrderCommand(
-    string CustomerName, 
-    string CustomerEmail, 
-    string ShippingAddress, 
+    string CustomerName,
+    string CustomerEmail,
+    string ShippingAddress,
     List<OrderItemDto> Items
 ) : IRequest<Guid>;
 
@@ -26,17 +26,15 @@ public class CreateGuestOrderCommandHandler : IRequestHandler<CreateGuestOrderCo
     {
         var existingCustomer = await _customerRepository.GetByEmailAsync(request.CustomerEmail);
         Customer customer;
-          if (existingCustomer == null)
+        if (existingCustomer == null)
         {
-            // For guest checkout, parse the name and create with temporary password
             var nameParts = request.CustomerName.Split(' ', 2);
             var firstName = nameParts[0];
             var lastName = nameParts.Length > 1 ? nameParts[1] : "";
-            
-            // Create customer with temporary password for guest checkout
+
             customer = new Customer(request.CustomerEmail, "GUEST_TEMP_PASSWORD", firstName, lastName);
             customer.UpdateShippingAddress(request.ShippingAddress);
-            
+
             await _customerRepository.AddAsync(customer);
             await _customerRepository.SaveChangesAsync();
         }
@@ -55,7 +53,7 @@ public class CreateGuestOrderCommandHandler : IRequestHandler<CreateGuestOrderCo
 
         await _orderRepository.AddAsync(order);
         await _orderRepository.SaveChangesAsync();
-        
+
         return order.Id;
     }
 }

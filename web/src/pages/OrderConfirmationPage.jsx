@@ -183,27 +183,17 @@ const OrderConfirmationPage = () => {
           </div>
         )}
         <div className="bg-blue-50 rounded-lg p-6 mb-6">
-          <h2 className="text-lg font-semibold text-blue-900 mb-3">
-            Próximos Passos
-          </h2>
           <ul className="text-blue-800 space-y-2">
             <li className="flex items-start">
-              <span className="mr-2">•</span>
               <span>
-                Você receberá um email de confirmação em breve com os detalhes
-                do seu pedido.
+                Confira os detalhes do pedido enviados no seu email.
               </span>
             </li>
             <li className="flex items-start">
-              <span className="mr-2">•</span>
               <span>
-                Enviaremos informações de rastreamento assim que seu pedido for
+                Informações de rastreamento serão atualizadas quando o pedido for
                 enviado.
               </span>
-            </li>
-            <li className="flex items-start">
-              <span className="mr-2">•</span>
-              <span>Tempo estimado de entrega é de 3-5 dias úteis.</span>
             </li>
           </ul>
         </div>

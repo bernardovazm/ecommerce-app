@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Ecommerce.Domain.Interfaces;
 using Ecommerce.Domain.ValueObjects;
 using Ecommerce.Domain.Entities;
+using Ecommerce.Application.Services;
 
 namespace Ecommerce.Infrastructure.Messaging;
 
@@ -28,17 +29,16 @@ public class PaymentRequestConsumer : BackgroundService, IMessageConsumer
         _logger = logger;
         _serviceProvider = serviceProvider;
         _configuration = configuration;
-    }    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    }
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        // Initialize RabbitMQ connection with retry logic
         await InitializeRabbitMQAsync(stoppingToken);
-        
+
         if (_connection != null && _channel != null)
         {
             await StartAsync(stoppingToken);
         }
-        
-        // Keep the service running
+
         while (!stoppingToken.IsCancellationRequested)
         {
             await Task.Delay(1000, stoppingToken);
@@ -67,17 +67,16 @@ public class PaymentRequestConsumer : BackgroundService, IMessageConsumer
 
                 _connection = factory.CreateConnection();
                 _channel = _connection.CreateModel();
-                
-                // Declare the queue to ensure it exists
+
                 _channel.QueueDeclare(queue: "payment-requests", durable: true, exclusive: false, autoDelete: false, arguments: null);
-                
+
                 _logger.LogInformation("Successfully connected to RabbitMQ");
                 return;
             }
             catch (Exception ex)
             {
                 retryCount++;
-                _logger.LogWarning(ex, "Failed to connect to RabbitMQ (attempt {Attempt}/{MaxRetries}). Retrying in {Delay}ms...", 
+                _logger.LogWarning(ex, "Failed to connect to RabbitMQ (attempt {Attempt}/{MaxRetries}). Retrying in {Delay}ms...",
                     retryCount, maxRetries, retryDelayMs);
 
                 if (retryCount >= maxRetries)
@@ -89,7 +88,8 @@ public class PaymentRequestConsumer : BackgroundService, IMessageConsumer
                 await Task.Delay(retryDelayMs, stoppingToken);
             }
         }
-    }    public new Task StartAsync(CancellationToken cancellationToken = default)
+    }
+    public new Task StartAsync(CancellationToken cancellationToken = default)
     {
         if (_channel == null)
         {
@@ -115,15 +115,14 @@ public class PaymentRequestConsumer : BackgroundService, IMessageConsumer
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error processing payment request message: {Message}", message);
-                
-                // Reject and requeue for retry (up to dead letter queue)
+
                 _channel?.BasicNack(ea.DeliveryTag, false, false);
             }
         };
 
         _channel.BasicConsume(queue: "payment-requests", autoAck: false, consumer: consumer);
         _logger.LogInformation("Payment request consumer started");
-        
+
         return Task.CompletedTask;
     }
 
@@ -136,7 +135,7 @@ public class PaymentRequestConsumer : BackgroundService, IMessageConsumer
 
         try
         {
-            _logger.LogInformation("Processing payment request {PaymentRequestId} for order {OrderId}", 
+            _logger.LogInformation("Processing payment request {PaymentRequestId} for order {OrderId}",
                 message.PaymentRequestId, message.OrderId);
 
             var paymentRequest = await paymentRequestRepository.GetByIdAsync(message.PaymentRequestId);
@@ -155,38 +154,41 @@ public class PaymentRequestConsumer : BackgroundService, IMessageConsumer
                 return;
             }
 
-            // Mark as processing
             paymentRequest.MarkAsProcessing();
             order.MarkPaymentProcessing();
             await paymentRequestRepository.UpdateAsync(paymentRequest);
             await orderRepository.UpdateAsync(order);
 
-            // Try to process payment
-            var paymentResult = await paymentService.PayAsync(order);
-
-            if (paymentResult.Success)
+            var paymentResult = await paymentService.PayAsync(order); if (paymentResult.Success)
             {
-                // Payment successful
                 paymentRequest.MarkAsCompleted(paymentResult.GatewayId);
                 order.Confirm();
-                
-                _logger.LogInformation("Payment successful for order {OrderId}, gateway ID: {GatewayId}", 
+
+                _logger.LogInformation("Payment successful for order {OrderId}, gateway ID: {GatewayId}",
                     message.OrderId, paymentResult.GatewayId);
+                try
+                {
+                    var orderNotificationService = scope.ServiceProvider.GetRequiredService<IOrderNotificationService>();
+                    await orderNotificationService.SendOrderConfirmationEmailAsync(order);
+                    _logger.LogInformation("Order confirmation email sent for order {OrderId}", message.OrderId);
+                }
+                catch (Exception emailEx)
+                {
+                    _logger.LogError(emailEx, "Failed to send order confirmation email for order {OrderId}", message.OrderId);
+                }
             }
             else
             {
-                // Payment failed
                 paymentRequest.MarkAsFailed(paymentResult.Error ?? "Unknown payment error");
                 order.MarkPaymentFailed();
-                
-                _logger.LogWarning("Payment failed for order {OrderId}: {Error}", 
+
+                _logger.LogWarning("Payment failed for order {OrderId}: {Error}",
                     message.OrderId, paymentResult.Error);
 
-                // Schedule retry if possible
                 if (paymentRequest.CanRetry())
                 {
                     var messagePublisher = scope.ServiceProvider.GetRequiredService<IMessagePublisher>();
-                    await Task.Delay(TimeSpan.FromMinutes(Math.Pow(2, paymentRequest.RetryCount))); // Exponential backoff
+                    await Task.Delay(TimeSpan.FromMinutes(Math.Pow(2, paymentRequest.RetryCount)));
                     await messagePublisher.PublishPaymentRequestAsync(paymentRequest.Id);
                 }
             }

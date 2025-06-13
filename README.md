@@ -44,7 +44,7 @@ Comandos para visualizar em desenvolvimento:
 # db
 docker compose up db -d
 # web
-pnpm dev
+cd web && pnpm dev
 # api
 cd api && dotnet run --project Ecommerce.Api
 # containers

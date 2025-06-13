@@ -15,8 +15,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthResul
 
     public async Task<AuthResult> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        // Basic validation
-        if (string.IsNullOrWhiteSpace(request.Email) || 
+        if (string.IsNullOrWhiteSpace(request.Email) ||
             string.IsNullOrWhiteSpace(request.Password) ||
             string.IsNullOrWhiteSpace(request.FirstName) ||
             string.IsNullOrWhiteSpace(request.LastName))

@@ -10,13 +10,14 @@ using Ecommerce.Domain.ValueObjects;
 namespace Ecommerce.Infrastructure.Messaging;
 
 public class RabbitMQPublisher : IMessagePublisher, IDisposable
-{    private readonly IConnection? _connection;
+{
+    private readonly IConnection? _connection;
     private readonly IModel? _channel;
     private readonly ILogger<RabbitMQPublisher> _logger;
     private readonly IServiceProvider _serviceProvider;
 
     public RabbitMQPublisher(
-        IConfiguration configuration, 
+        IConfiguration configuration,
         ILogger<RabbitMQPublisher> logger,
         IServiceProvider serviceProvider)
     {
@@ -37,13 +38,11 @@ public class RabbitMQPublisher : IMessagePublisher, IDisposable
         {
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
-            // Declare queues
             DeclareQueues();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to connect to RabbitMQ on startup. Connection will be retried on first use.");
-            // Don't throw here, allow the application to start
             _connection = null;
             _channel = null;
         }
@@ -51,7 +50,12 @@ public class RabbitMQPublisher : IMessagePublisher, IDisposable
 
     private void DeclareQueues()
     {
-        // Payment processing queue with dead letter exchange
+        if (_channel == null)
+        {
+            _logger.LogError("RabbitMQ channel is not initialized.");
+            return;
+        }
+
         _channel.ExchangeDeclare("payment-dlx", ExchangeType.Direct);
         _channel.QueueDeclare("payment-failed", durable: true, exclusive: false, autoDelete: false);
         _channel.QueueBind("payment-failed", "payment-dlx", "payment-failed");
@@ -60,7 +64,7 @@ public class RabbitMQPublisher : IMessagePublisher, IDisposable
         {
             { "x-dead-letter-exchange", "payment-dlx" },
             { "x-dead-letter-routing-key", "payment-failed" },
-            { "x-message-ttl", 300000 } // 5 minutes TTL
+            { "x-message-ttl", 300000 }
         };
 
         _channel.QueueDeclare("payment-requests", durable: true, exclusive: false, autoDelete: false, arguments: queueArgs);
@@ -70,6 +74,12 @@ public class RabbitMQPublisher : IMessagePublisher, IDisposable
     {
         try
         {
+            if (_channel == null)
+            {
+                _logger.LogError("RabbitMQ channel is not initialized. Cannot publish message to queue {QueueName}", queueName);
+                throw new InvalidOperationException("RabbitMQ channel is not initialized.");
+            }
+
             var jsonMessage = JsonSerializer.Serialize(message);
             var body = Encoding.UTF8.GetBytes(jsonMessage);
 
@@ -79,7 +89,7 @@ public class RabbitMQPublisher : IMessagePublisher, IDisposable
             properties.Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
 
             _channel.BasicPublish(exchange: "", routingKey: queueName, basicProperties: properties, body: body);
-            
+
             _logger.LogInformation("Message published to queue {QueueName}: {MessageId}", queueName, properties.MessageId);
             return Task.CompletedTask;
         }
@@ -88,11 +98,12 @@ public class RabbitMQPublisher : IMessagePublisher, IDisposable
             _logger.LogError(ex, "Failed to publish message to queue {QueueName}", queueName);
             throw;
         }
-    }    public async Task PublishPaymentRequestAsync(Guid paymentRequestId, CancellationToken cancellationToken = default)
+    }
+    public async Task PublishPaymentRequestAsync(Guid paymentRequestId, CancellationToken cancellationToken = default)
     {
         using var scope = _serviceProvider.CreateScope();
         var paymentRequestRepository = scope.ServiceProvider.GetRequiredService<IPaymentRequestRepository>();
-        
+
         var paymentRequest = await paymentRequestRepository.GetByIdAsync(paymentRequestId, cancellationToken);
         if (paymentRequest == null)
         {

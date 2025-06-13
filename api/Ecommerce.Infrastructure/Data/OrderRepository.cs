@@ -52,7 +52,6 @@ public class OrderRepository : Domain.Interfaces.IOrderRepository, Domain.Reposi
             .ToListAsync(cancellationToken);
     }
 
-    // Legacy methods for backward compatibility
     public async Task<Order?> GetByIdAsync(Guid id)
     {
         return await GetByIdAsync(id, CancellationToken.None);

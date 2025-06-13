@@ -6,6 +6,7 @@ using Ecommerce.Infrastructure.Email;
 using Ecommerce.Infrastructure.Messaging;
 using Ecommerce.Infrastructure.Payments.Pagarme;
 using Ecommerce.Infrastructure.Payments.Pagarme.Configuration;
+using Ecommerce.Application.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,37 +15,38 @@ namespace Ecommerce.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("Default") 
-                ?? "Host=localhost;Database=ecommerce;Username=postgres;Password=postgres"));
-          // Repositories
-        services.AddScoped<IProductReadRepository, ProductReadRepository>();
-        services.AddScoped<Domain.Interfaces.IOrderRepository, OrderRepository>();
-        services.AddScoped<Domain.Repositories.IOrderRepository, OrderRepository>();
-        services.AddScoped<ICategoryRepository, CategoryRepository>();
-        services.AddScoped<ICustomerRepository, CustomerRepository>();
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IPaymentRequestRepository, PaymentRequestRepository>();
-        
-        // Authentication Services
-        services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<IPasswordService, PasswordService>();
-        services.AddScoped<ITokenService, TokenService>();
-        services.AddScoped<IPasswordResetService, PasswordResetService>();
-          // Email Services
-        services.AddScoped<IEmailService, SmtpEmailService>();
+  public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+  {
+    services.AddDbContext<AppDbContext>(options =>
+        options.UseNpgsql(configuration.GetConnectionString("Default")
+            ?? "Host=localhost;Database=ecommerce;Username=postgres;Password=postgres"));
+    // Repositories
+    services.AddScoped<IProductReadRepository, ProductReadRepository>();
+    services.AddScoped<Domain.Interfaces.IOrderRepository, OrderRepository>();
+    services.AddScoped<Domain.Repositories.IOrderRepository, OrderRepository>();
+    services.AddScoped<ICategoryRepository, CategoryRepository>();
+    services.AddScoped<ICustomerRepository, CustomerRepository>();
+    services.AddScoped<IUserRepository, UserRepository>();
+    services.AddScoped<IPaymentRequestRepository, PaymentRequestRepository>();
 
-        // Payment Services
-        services.Configure<PagarmeSettings>(configuration.GetSection(PagarmeSettings.SectionName));
-        services.AddHttpClient<IPagarmeClient, PagarmeClient>();
-        services.AddScoped<IPagarmeClient, PagarmeClient>();
+    // Authentication
+    services.AddScoped<IAuthService, AuthService>();
+    services.AddScoped<IPasswordService, PasswordService>();
+    services.AddScoped<ITokenService, TokenService>();
+    services.AddScoped<IPasswordResetService, PasswordResetService>();
+    // Email
+    services.AddScoped<IEmailService, SmtpEmailService>();
+    services.AddScoped<IOrderNotificationService, OrderNotificationService>();
 
-        // Messaging Services
-        services.AddSingleton<IMessagePublisher, RabbitMQPublisher>();
-        services.AddHostedService<PaymentRequestConsumer>();
+    // Payment
+    services.Configure<PagarmeSettings>(configuration.GetSection(PagarmeSettings.SectionName));
+    services.AddHttpClient<IPagarmeClient, PagarmeClient>();
+    services.AddScoped<IPagarmeClient, PagarmeClient>();
 
-        return services;
-    }
+    // Messaging
+    services.AddSingleton<IMessagePublisher, RabbitMQPublisher>();
+    services.AddHostedService<PaymentRequestConsumer>();
+
+    return services;
+  }
 }
