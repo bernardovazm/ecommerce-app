@@ -5,6 +5,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: ecommerce
+      POSTGRES_MULTIPLE_DATABASES: ecommerce,sonarqube
     ports:
       - "5432:5432"
     healthcheck:
@@ -15,6 +16,7 @@ services:
       start_period: 30s
     volumes:
       - db-data:/var/lib/postgresql/data
+      - ./docker/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -51,5 +53,36 @@ services:
     ports:
       - "5173:80"
 
+  sonarqube:
+    image: sonarqube:10.4-community
+    container_name: sonarqube
+    environment:
+      - SONAR_JDBC_URL=jdbc:postgresql://db:5432/sonarqube
+      - SONAR_JDBC_USERNAME=postgres
+      - SONAR_JDBC_PASSWORD=postgres
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    ports:
+      - "9000:9000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - sonar_data:/opt/sonarqube/data
+      - sonar_logs:/opt/sonarqube/logs
+      - sonar_extensions:/opt/sonarqube/extensions
+    networks:
+      - sonarnet
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+
 volumes:
   db-data:
+  sonar_data:
+  sonar_logs:
+  sonar_extensions:
+
+networks:
+  sonarnet:
+    driver: bridge

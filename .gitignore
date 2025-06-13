@@ -33,3 +33,17 @@ docker-compose.override.yml
 # Temporary files
 *.tmp
 *.temp
+
+# SonarQube
+.scannerwork/
+.sonar/
+**/coverage/
+**/TestResults/
+**/*.coverage
+**/*.coveragexml
+**/*.ncrunch*
+
+# Quality tools
+.nyc_output/
+coverage/
+test-results.xml

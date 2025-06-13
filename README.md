@@ -22,6 +22,8 @@ DevOps
 - Docker Compose
 - Integração via Swagger
 - PostgreSQL como banco de dados
+- SonarQube para análise estática do código
+- GitHub Actions para CI/CD
 
 ## Executar
 
@@ -29,24 +31,44 @@ Instale o Docker, clone o repositório e execute os comandos abaixo:
 
 ```bash
 # configure variáveis de ambiente e inicie os containers na raiz do projeto
-cp .env.example .env && docker compose up --build
+cp .env.example .env ; docker compose up --build
 # frontend http://localhost:5173
 # swagger http://localhost:7000/swagger
 ```
 
 ---
 
-Comandos para visualizar em desenvolvimento:
+Comandos para o desenvolvimento:
 
 ```bash
 # db
 docker compose up db -d
 # web
-cd web && pnpm dev
+cd web ; pnpm dev
 # api
-cd api && dotnet run --project Ecommerce.Api
+cd api ; dotnet run --project Ecommerce.Api
 # containers
 docker compose ps
+# testes
+dotnet test
+```
+
+## Teste e Análise
+
+SonarQube configurado para análise estática:
+
+#### Configuração Local
+
+Inicie o container:
+
+```bash
+docker compose up sonarqube -d
+# http://localhost:9000 / padrão login/senha: 'admin'
+# execute
+# windows
+.\run-sonar-analysis.ps1
+# linux/mac
+./run-sonar-analysis.sh
 ```
 
 ## Estrutura
