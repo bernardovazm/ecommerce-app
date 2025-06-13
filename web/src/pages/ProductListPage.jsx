@@ -111,8 +111,8 @@ const ProductListPage = () => {
               <button
                 onClick={() => handleCategoryChange("")}
                 className={`block w-full text-left px-3 py-2 rounded-lg transition-colors ${!selectedCategory
-                    ? "bg-blue-100 text-blue-700"
-                    : "hover:bg-gray-100"
+                  ? "bg-blue-100 text-blue-700"
+                  : "hover:bg-gray-100"
                   }`}
               >
                 Todas as Categorias
@@ -122,8 +122,8 @@ const ProductListPage = () => {
                   key={category.id}
                   onClick={() => handleCategoryChange(category.name)}
                   className={`block w-full text-left px-3 py-2 rounded-lg transition-colors ${selectedCategory === category.name
-                      ? "bg-blue-100 text-blue-700"
-                      : "hover:bg-gray-100"
+                    ? "bg-blue-100 text-blue-700"
+                    : "hover:bg-gray-100"
                     }`}
                 >
                   {category.name}
@@ -184,8 +184,8 @@ const ProductListPage = () => {
                         key={page}
                         onClick={() => setCurrentPage(page)}
                         className={`px-3 py-2 border rounded-lg ${currentPage === page
-                            ? "bg-blue-600 text-white border-blue-600"
-                            : "border-gray-300 hover:bg-gray-50"
+                          ? "bg-blue-600 text-white border-blue-600"
+                          : "border-gray-300 hover:bg-gray-50"
                           }`}
                       >
                         {page}

@@ -1,114 +1,52 @@
 # Ecommerce App
 
-Aplicação full stack de loja virtual, desenvolvida com .NET no backend e React (Vite, Tailwind) no frontend, utilizando Clean Architecture e Docker para build.
+Aplicação full stack de loja virtual com .NET, React, PostgreSQL e Docker.
 
 ## Tecnologias
 
-Backend (.NET + PostgreSQL)
+**Backend**: ASP.NET Core, Entity Framework, MediatR/CQRS, XUnit  
+**Frontend**: React, Vite, Tailwind CSS, Vitest  
+**DevOps**: Docker Compose, GitHub Actions, SonarQube
 
-- ASP.NET Core, Entity Framework Core
-- MediatR/CQRS, AutoMapper
-- Docker, Swagger
-- RabbitMQ
-- XUnit
-
-Frontend (React)
-
-- React + Vite
-- Tailwind CSS, React Router, Axios
-- Context API (gerenciamento de estado)
-
-DevOps
-
-- Docker Compose
-- Integração via Swagger
-- PostgreSQL como banco de dados
-- SonarQube para análise estática do código
-- GitHub Actions para CI/CD
-
-## Executar
-
-Instale o Docker, clone o repositório e execute os comandos abaixo:
+## Executar o Projeto
 
 ```bash
-# configure variáveis de ambiente e inicie os containers na raiz do projeto
-cp .env.example .env && docker compose up --build
-# frontend http://localhost:5173
-# swagger http://localhost:7000/swagger
+# Configurar
+./scripts/setup.sh     # Linux/Mac
+scripts\setup.ps1      # Windows
+
+# Iniciar containers
+docker compose up --build
+
+# Ao finalizar, acesse
+# Frontend: http://localhost:5173
+# API: http://localhost:7000/swagger
 ```
 
----
-
-Comandos para o desenvolvimento:
+### Testes e Setup
 
 ```bash
-# db
+./scripts/setup.sh     # Configuração inicial
+./scripts/build.sh     # Build completo
+./scripts/test.sh      # Executar testes
+./scripts/quality.sh   # Análise de qualidade
+```
+
+### Desenvolvimento
+
+```bash
+# Banco de dados
 docker compose up db -d
-# web
+
+# Frontend
 cd web && npm run dev
-# api
+
+# Backend
 cd api && dotnet run --project Ecommerce.Api
-# containers
-docker compose ps
-# testes
-dotnet test
-```
 
-## Análise de Código e Testes
-
-SonarQube:
-
-```bash
-docker compose up sonarqube -d
-# http://localhost:9000 / padrão login/senha: 'admin'
-# execute
-# windows
-.\run-sonar-analysis.ps1
-# linux/mac
-./run-sonar-analysis.sh
-```
-
-Suíte de testes:
-
-```bash
-# windows (powershell)
-.\run-tests.ps1
-# linux/mac
-./run-tests.sh
-
+# Teste
 dotnet test --filter "Category=Unit"
-dotnet test --filter "Category=Integration"
-dotnet test --filter "ProductTests"
-
-dotnet test --collect:"XPlat Code Coverage"
+npm test -- --coverage
 ```
 
-## Estrutura
-
-Backend
-
-- Domain: Entidades e regras de negócio
-- Application: Casos de uso (CQRS)
-- Infrastructure: Acesso a dados e serviços
-- Api: Controllers e configuração
-- Tests: Testes unitários
-
-Frontend
-
-- components: Componentes reutilizáveis
-- pages: Páginas da aplicação
-- context: Context API (estado global)
-- services: Integração com API
-
-Banco de dados
-
-- Usuários e Autenticação: Users, Customers
-- Catálogo de Produtos: Categories, Products
-- Sistema de Pedidos: Orders, OrderItems
-- Pagamentos e Envio: Payments, Shipments
-
-Projeto demonstrativo com foco em arquitetura limpa, sistema de mensageria, CQRS para separação de comandos e consultas, DDD, JWT, design responsivo e padrões modernos.
-
-```
-
-```
+Projeto demonstrativo com foco em Clean Architecture, DDD e padrões modernos.

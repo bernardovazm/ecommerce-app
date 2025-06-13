@@ -27,6 +27,12 @@ pids
 # Dependency directories
 node_modules/
 
+# Build artifacts
+dist/
+build/
+bin/
+obj/
+
 # Docker
 docker-compose.override.yml
 
@@ -34,7 +40,7 @@ docker-compose.override.yml
 *.tmp
 *.temp
 
-# SonarQube
+# Quality analysis
 .scannerwork/
 .sonar/
 **/coverage/
@@ -43,7 +49,7 @@ docker-compose.override.yml
 **/*.coveragexml
 **/*.ncrunch*
 
-# Quality tools
+# Test results
 .nyc_output/
 coverage/
 test-results.xml

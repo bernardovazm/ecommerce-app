@@ -4,7 +4,8 @@ import { authService } from "../services/api";
 const AuthContext = createContext();
 export default AuthContext;
 
-export const AuthProvider = ({ children }) => {  const [user, setUser] = useState(null);
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(!!token);
@@ -91,7 +92,8 @@ export const AuthProvider = ({ children }) => {  const [user, setUser] = useStat
         success: false,
         message:
           error.response?.data?.message ||
-          "Registration failed. Please try again.",      };
+          "Registration failed. Please try again.",
+      };
     } finally {
       setLoading(false);
     }

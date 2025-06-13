@@ -6,7 +6,7 @@ import { orderService, shippingService } from "../services/api";
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const { cartItems, getCartTotal, clearCart } = useCart();
-  const [loading, setLoading] = useState(false);  const [shippingOptions, setShippingOptions] = useState([]);
+  const [loading, setLoading] = useState(false); const [shippingOptions, setShippingOptions] = useState([]);
   const [selectedShipping, setSelectedShipping] = useState(null);
   const [shippingCalculated, setShippingCalculated] = useState(false);
   const [formData, setFormData] = useState({
@@ -57,7 +57,7 @@ const CheckoutPage = () => {
         [name]: "",
       }));
     }
-  };  const calculateShipping = useCallback(async () => {
+  }; const calculateShipping = useCallback(async () => {
     if (!formData.zipCode || formData.zipCode.length < 8) {
       alert("Por favor, preencha o CEP corretamente (8 dígitos)");
       return;
