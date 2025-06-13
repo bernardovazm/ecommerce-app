@@ -27,37 +27,7 @@ const CheckoutPage = () => {
   });
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    const cleanZip = formData.zipCode.replace(/\D/g, "");
-    if (cleanZip.length === 8) {
-      calculateShipping();
-    } else {
-      setShippingOptions([]);
-      setSelectedShipping(null);
-      setShippingCalculated(false);
-    }
-  }, [formData.zipCode, calculateShipping]);
-
-  const getShippingCost = () => {
-    return selectedShipping?.price || 0;
-  };
-
-  const getFinalTotal = () => {
-    return getCartTotal() + getShippingCost();
-  };
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
-    }
-  }; const calculateShipping = useCallback(async () => {
+  const calculateShipping = useCallback(async () => {
     if (!formData.zipCode || formData.zipCode.length < 8) {
       alert("Por favor, preencha o CEP corretamente (8 dígitos)");
       return;
@@ -92,6 +62,38 @@ const CheckoutPage = () => {
       setShippingCalculated(false);
     }
   }, [formData.zipCode, cartItems]);
+
+  useEffect(() => {
+    const cleanZip = formData.zipCode.replace(/\D/g, "");
+    if (cleanZip.length === 8) {
+      calculateShipping();
+    } else {
+      setShippingOptions([]);
+      setSelectedShipping(null);
+      setShippingCalculated(false);
+    }
+  }, [formData.zipCode, calculateShipping]);
+
+  const getShippingCost = () => {
+    return selectedShipping?.price || 0;
+  };
+
+  const getFinalTotal = () => {
+    return getCartTotal() + getShippingCost();
+  };
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
+  };
 
   const handleShippingSelection = (option) => {
     setSelectedShipping(option);

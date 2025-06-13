@@ -113,14 +113,6 @@ const ProfilePage = () => {
             <div className="flex items-center justify-between">
               <h1 className="text-2xl font-bold text-gray-900">Minha Conta</h1>
               <div className="flex space-x-3">
-                {!isEditing && activeTab === "profile" && (
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    Editar Perfil
-                  </button>
-                )}
                 <button
                   onClick={logout}
                   className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
