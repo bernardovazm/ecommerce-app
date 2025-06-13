@@ -10,6 +10,7 @@ Backend (.NET + PostgreSQL)
 - MediatR/CQRS, AutoMapper
 - Docker, Swagger
 - RabbitMQ
+- XUnit
 
 Frontend (React)
 
@@ -31,7 +32,7 @@ Instale o Docker, clone o repositório e execute os comandos abaixo:
 
 ```bash
 # configure variáveis de ambiente e inicie os containers na raiz do projeto
-cp .env.example .env ; docker compose up --build
+cp .env.example .env && docker compose up --build
 # frontend http://localhost:5173
 # swagger http://localhost:7000/swagger
 ```
@@ -44,22 +45,18 @@ Comandos para o desenvolvimento:
 # db
 docker compose up db -d
 # web
-cd web ; pnpm dev
+cd web && npm run dev
 # api
-cd api ; dotnet run --project Ecommerce.Api
+cd api && dotnet run --project Ecommerce.Api
 # containers
 docker compose ps
 # testes
 dotnet test
 ```
 
-## Teste e Análise
+## Análise de Código e Testes
 
-SonarQube configurado para análise estática:
-
-#### Configuração Local
-
-Inicie o container:
+SonarQube:
 
 ```bash
 docker compose up sonarqube -d
@@ -69,6 +66,21 @@ docker compose up sonarqube -d
 .\run-sonar-analysis.ps1
 # linux/mac
 ./run-sonar-analysis.sh
+```
+
+Suíte de testes:
+
+```bash
+# windows (powershell)
+.\run-tests.ps1
+# linux/mac
+./run-tests.sh
+
+dotnet test --filter "Category=Unit"
+dotnet test --filter "Category=Integration"
+dotnet test --filter "ProductTests"
+
+dotnet test --collect:"XPlat Code Coverage"
 ```
 
 ## Estrutura
@@ -96,3 +108,7 @@ Banco de dados
 - Pagamentos e Envio: Payments, Shipments
 
 Projeto demonstrativo com foco em arquitetura limpa, sistema de mensageria, CQRS para separação de comandos e consultas, DDD, JWT, design responsivo e padrões modernos.
+
+```
+
+```

@@ -1,15 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../hooks/useCart";
 import { orderService, shippingService } from "../services/api";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
-  const { cartItems, getCartTotal, getCartItemsCount, clearCart } = useCart();
-  const [loading, setLoading] = useState(false);
-  const [shippingOptions, setShippingOptions] = useState([]);
+  const { cartItems, getCartTotal, clearCart } = useCart();
+  const [loading, setLoading] = useState(false);  const [shippingOptions, setShippingOptions] = useState([]);
   const [selectedShipping, setSelectedShipping] = useState(null);
-  const [shippingLoading, setShippingLoading] = useState(false);
   const [shippingCalculated, setShippingCalculated] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -38,7 +36,7 @@ const CheckoutPage = () => {
       setSelectedShipping(null);
       setShippingCalculated(false);
     }
-  }, [formData.zipCode]);
+  }, [formData.zipCode, calculateShipping]);
 
   const getShippingCost = () => {
     return selectedShipping?.price || 0;
@@ -59,14 +57,12 @@ const CheckoutPage = () => {
         [name]: "",
       }));
     }
-  };
-  const calculateShipping = async () => {
+  };  const calculateShipping = useCallback(async () => {
     if (!formData.zipCode || formData.zipCode.length < 8) {
       alert("Por favor, preencha o CEP corretamente (8 dígitos)");
       return;
     }
 
-    setShippingLoading(true);
     setShippingOptions([]);
     setSelectedShipping(null);
     setShippingCalculated(false);
@@ -91,13 +87,11 @@ const CheckoutPage = () => {
         setShippingCalculated(false);
       }
     } catch (error) {
-      console.error("Erro ao calcular frete:", error);
+      alert("Erro ao calcular frete:", error);
       alert("Erro ao calcular o frete. Verifique o CEP e tente novamente.");
       setShippingCalculated(false);
-    } finally {
-      setShippingLoading(false);
     }
-  };
+  }, [formData.zipCode, cartItems]);
 
   const handleShippingSelection = (option) => {
     setSelectedShipping(option);
@@ -130,7 +124,7 @@ const CheckoutPage = () => {
       newErrors.email = "Por favor, insira um endereço de email válido";
     }
 
-    if (formData.phone && !/^\+?[\d\s\-\(\)]{10,}$/.test(formData.phone)) {
+    if (formData.phone && !/^\+?[\d\s\-()]{10,}$/.test(formData.phone)) {
       newErrors.phone = "Por favor, insira um número de telefone válido";
     }
 
@@ -632,7 +626,7 @@ const CheckoutPage = () => {
                   Total
                 </span>
                 <span className="text-lg font-semibold text-gray-900">
-                  {!!selectedShipping ? `
+                  {selectedShipping ? `
                   R$ ${getFinalTotal().toFixed(2)}` : "--"}
                 </span>
               </div>

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Iniciando análise SonarQube"
+echo "Iniciando SonarQube"
 
 if ! curl -s http://localhost:9000/api/system/status > /dev/null; then
     echo "SonarQube não está disponível. Execute 'docker compose up sonarqube -d'"

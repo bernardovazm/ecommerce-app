@@ -1,28 +1,23 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useCallback } from "react";
 import { authService } from "../services/api";
 
 const AuthContext = createContext();
+export default AuthContext;
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-};
-
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+export const AuthProvider = ({ children }) => {  const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(!!token);
 
-  useEffect(() => {
-    if (token) {
-      loadUserProfile();
-    }
-  }, [token]);
-  const loadUserProfile = async () => {
+  const logout = useCallback(() => {
+    setUser(null);
+    setToken(null);
+    setIsAuthenticated(false);
+    localStorage.removeItem("token");
+    localStorage.removeItem("tokenExpiry");
+  }, []);
+
+  const loadUserProfile = useCallback(async () => {
     if (!token) return;
 
     try {
@@ -33,12 +28,18 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
       }
     } catch (error) {
-      console.error("Failed to load user profile:", error);
+      // Failed to load user profile, logout user
       logout();
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, logout]);
+
+  useEffect(() => {
+    if (token) {
+      loadUserProfile();
+    }
+  }, [token, loadUserProfile]);
 
   const login = async (email, password) => {
     try {
@@ -57,7 +58,7 @@ export const AuthProvider = ({ children }) => {
         return { success: true };
       }
     } catch (error) {
-      console.error("Login failed:", error);
+      alert("Login failed:", error);
       return {
         success: false,
         message:
@@ -85,24 +86,15 @@ export const AuthProvider = ({ children }) => {
         return { success: true };
       }
     } catch (error) {
-      console.error("Registration failed:", error);
+      alert("Registration failed:", error);
       return {
         success: false,
         message:
           error.response?.data?.message ||
-          "Registration failed. Please try again.",
-      };
+          "Registration failed. Please try again.",      };
     } finally {
       setLoading(false);
     }
-  };
-
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem("token");
-    localStorage.removeItem("tokenExpiry");
   };
 
   const updateProfile = (updatedUser) => {
@@ -130,3 +122,5 @@ export const AuthProvider = ({ children }) => {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+

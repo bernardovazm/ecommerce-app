@@ -1,4 +1,4 @@
-Write-Host "Iniciando análise SonarQube"
+Write-Host "Iniciando SonarQube"
 
 try {
     Invoke-WebRequest -Uri "http://localhost:9000/api/system/status" -UseBasicParsing -TimeoutSec 5 | Out-Null

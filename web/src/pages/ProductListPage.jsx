@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Search, Filter } from "lucide-react";
 import ProductCard from "../components/ProductCard";
@@ -27,18 +27,17 @@ const ProductListPage = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [currentPage, selectedCategory, searchTerm]);
+  }, [currentPage, selectedCategory, searchTerm, fetchProducts]);
 
   const fetchCategories = async () => {
     try {
       const response = await categoryService.getAll();
       setCategories(response.data);
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      alert("Error fetching categories:", error);
     }
   };
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
       const response = await productService.search(
@@ -50,11 +49,11 @@ const ProductListPage = () => {
       setProducts(response.data.products);
       setTotalCount(response.data.totalCount);
     } catch (error) {
-      console.error("Error fetching products:", error);
+      alert("Error fetching products:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchTerm, selectedCategory, currentPage, pageSize]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -111,11 +110,10 @@ const ProductListPage = () => {
             <div className="space-y-2">
               <button
                 onClick={() => handleCategoryChange("")}
-                className={`block w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                  !selectedCategory
+                className={`block w-full text-left px-3 py-2 rounded-lg transition-colors ${!selectedCategory
                     ? "bg-blue-100 text-blue-700"
                     : "hover:bg-gray-100"
-                }`}
+                  }`}
               >
                 Todas as Categorias
               </button>
@@ -123,11 +121,10 @@ const ProductListPage = () => {
                 <button
                   key={category.id}
                   onClick={() => handleCategoryChange(category.name)}
-                  className={`block w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                    selectedCategory === category.name
+                  className={`block w-full text-left px-3 py-2 rounded-lg transition-colors ${selectedCategory === category.name
                       ? "bg-blue-100 text-blue-700"
                       : "hover:bg-gray-100"
-                  }`}
+                    }`}
                 >
                   {category.name}
                 </button>
@@ -186,11 +183,10 @@ const ProductListPage = () => {
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-2 border rounded-lg ${
-                          currentPage === page
+                        className={`px-3 py-2 border rounded-lg ${currentPage === page
                             ? "bg-blue-600 text-white border-blue-600"
                             : "border-gray-300 hover:bg-gray-50"
-                        }`}
+                          }`}
                       >
                         {page}
                       </button>

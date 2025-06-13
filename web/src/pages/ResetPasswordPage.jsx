@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { authService } from "../services/api";
 import { EyeIcon, EyeOffIcon, CheckCircleIcon } from "lucide-react";
@@ -89,7 +89,7 @@ const ResetPasswordPage = () => {
       } else {
         setError("Failed to reset password. Please try again.");
       }
-      console.error("Reset password error:", err);
+      alert("Reset password error:", err);
     } finally {
       setLoading(false);
     }

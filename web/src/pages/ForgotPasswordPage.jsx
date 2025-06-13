@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { authService } from "../services/api";
 import { ArrowLeftIcon, MailIcon } from "lucide-react";
@@ -33,7 +33,7 @@ const ForgotPasswordPage = () => {
       } else {
         setError("Falha ao enviar email de redefinição. Tente novamente.");
       }
-      console.error("Forgot password error:", err);
+      alert("Forgot password error:", err);
     } finally {
       setLoading(false);
     }

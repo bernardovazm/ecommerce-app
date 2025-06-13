@@ -1,10 +1,9 @@
-import React, { createContext, useContext, useReducer } from "react";
-
-const CartContext = createContext();
+import { useReducer } from "react";
+import { CartContext } from "./CartContextDefinition";
 
 const cartReducer = (state, action) => {
   switch (action.type) {
-    case "ADD_TO_CART":
+    case "ADD_TO_CART": {
       const existingItemIndex = state.cartItems.findIndex(
         (item) => item.product.id === action.payload.product.id
       );
@@ -22,6 +21,7 @@ const cartReducer = (state, action) => {
         ...state,
         cartItems: [...state.cartItems, action.payload],
       };
+    }
 
     case "REMOVE_FROM_CART":
       return {
@@ -113,10 +113,4 @@ export const CartProvider = ({ children }) => {
   );
 };
 
-export const useCart = () => {
-  const context = useContext(CartContext);
-  if (!context) {
-    throw new Error("useCart deve ser usado dentro de um CartProvider");
-  }
-  return context;
-};
+

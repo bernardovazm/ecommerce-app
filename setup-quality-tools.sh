@@ -28,7 +28,15 @@ chmod +x docker/init-db.sh
 dotnet tool install --global dotnet-sonarscanner --version 5.14.0
 
 cd web
-npm install
+
+echo "Limpando node_modules e package-lock.json"
+rm -rf node_modules package-lock.json
+
+echo "Instalando dependências do Node.js"
+if ! npm install --legacy-peer-deps; then
+    echo "Falha ao instalar dependências do Node.js"
+    exit 1
+fi
 cd ..
 
 docker compose up db rabbitmq sonarqube -d

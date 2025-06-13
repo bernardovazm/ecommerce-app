@@ -20,7 +20,20 @@ Write-Host "Dependências OK"
 dotnet tool install --global dotnet-sonarscanner --version 5.14.0
 
 Set-Location web
-npm install
+
+Write-Host "Limpando node_modules e package-lock.json"
+Remove-Item -Recurse -Force node_modules, package-lock.json -ErrorAction SilentlyContinue
+
+Write-Host "Instalando dependências Node.js"
+try {
+    npm install
+    if ($LASTEXITCODE -ne 0) {
+        throw "npm install falhou"
+    }
+} catch {
+    Write-Error "Erro ao instalar dependências Node.js: $_"
+    exit 1
+}
 Set-Location ..
 
 docker compose up db rabbitmq sonarqube -d

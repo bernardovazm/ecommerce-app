@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { productService } from "../services/api";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../hooks/useCart";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -21,7 +21,7 @@ const ProductDetailPage = () => {
         setProduct(response.data);
       } catch (err) {
         setError("Falha ao carregar produto");
-        console.error("Error fetching product:", err);
+        alert("Error fetching product:", err);
       } finally {
         setLoading(false);
       }
@@ -37,7 +37,7 @@ const ProductDetailPage = () => {
       addToCart(product, quantity);
       alert("Produto adicionado ao carrinho!");
     } catch (err) {
-      console.error("Error adding to cart:", err);
+      alert("Error adding to cart:", err);
       alert("Falha ao adicionar produto ao carrinho");
     } finally {
       setAddingToCart(false);

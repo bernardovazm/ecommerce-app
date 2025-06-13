@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
-import { authService, orderService } from "../services/api";
-import { ShoppingBagIcon, CalendarIcon, DollarSignIcon } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useAuth } from "../hooks/useAuth";
+import { authService } from "../services/api";
+import { ShoppingBagIcon, CalendarIcon } from "lucide-react";
 
 const ProfilePage = () => {
   const { user, logout } = useAuth();
@@ -30,7 +30,7 @@ const ProfilePage = () => {
         });
       } catch (err) {
         setError("Failed to load profile");
-        console.error("Profile fetch error:", err);
+        alert("Profile fetch error:", err);
       } finally {
         setLoading(false);
       }
@@ -47,7 +47,7 @@ const ProfilePage = () => {
       const response = await authService.getOrders();
       setOrders(response.data);
     } catch (err) {
-      console.error("Orders fetch error:", err);
+      alert("Orders fetch error:", err);
     } finally {
       setOrdersLoading(false);
     }
@@ -57,7 +57,7 @@ const ProfilePage = () => {
     if (activeTab === "orders" && orders.length === 0) {
       fetchOrders();
     }
-  }, [activeTab]);
+  }, [activeTab, orders.length]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -77,7 +77,7 @@ const ProfilePage = () => {
       setProfile((prev) => ({ ...prev, ...formData }));
     } catch (err) {
       setError("Failed to update profile");
-      console.error("Profile update error:", err);
+      alert("Profile update error:", err);
     } finally {
       setLoading(false);
     }
