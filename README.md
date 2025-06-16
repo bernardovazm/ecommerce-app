@@ -2,6 +2,10 @@
 
 Aplicação full stack de loja virtual com .NET, React, PostgreSQL e Docker.
 
+<div>
+    <img alt="Preview do site" src=".github/preview.png" width="70%">
+</div>
+
 ## Tecnologias
 
 **Backend**: ASP.NET Core, Entity Framework, MediatR/CQRS, XUnit  
@@ -20,7 +24,7 @@ npm run docker
 npm run dev
 ```
 
-**URLs:**
+**Links:**
 
 - Frontend: http://localhost:5173
 - API: http://localhost:7000/swagger # Docker

@@ -80,7 +80,7 @@ const HomePage = () => {
               Produtos em Destaque
             </h2>
             <p className="text-gray-600">
-              Confira nossa seleção de itens abaixo
+              Confira os principais itens abaixo
             </p>
           </div>
           {loading ? (

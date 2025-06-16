@@ -35,7 +35,7 @@ function App() {
                   path="/order-confirmation/:orderId"
                   element={<OrderConfirmationPage />}
                 />
-                {/* Authentication routes - redirect to profile if already logged in */}
+                {/* Authentication routes */}
                 <Route
                   path="/login"
                   element={
@@ -68,7 +68,7 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
-                {/* Protected routes - require authentication */}
+                {/* Protected routes */}
                 <Route
                   path="/profile"
                   element={

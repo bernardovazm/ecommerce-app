@@ -184,13 +184,12 @@ const OrderConfirmationPage = () => {
           <ul className="text-blue-800 space-y-2">
             <li className="flex items-start">
               <span>
-                Confira os detalhes do pedido enviados no seu email.
+                Confira os seus pedidos no seu perfil.
               </span>
             </li>
             <li className="flex items-start">
               <span>
-                Informações de rastreamento serão atualizadas quando o pedido for
-                enviado.
+                Informações de rastreamento serão atualizadas.
               </span>
             </li>
           </ul>

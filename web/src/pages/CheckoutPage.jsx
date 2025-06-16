@@ -1,14 +1,18 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../hooks/useCart";
-import { orderService, shippingService } from "../services/api";
+import { useAuth } from "../hooks/useAuth";
+import { orderService } from "../services/api";
+import ShippingSection from "../components/ShippingSection";
+import { validateFormData, createOrderData, loadUserProfile, calculateShippingOptions, validateSubmission, handleZipCodeChange, getShippingDisplayText } from "../utils/checkoutHelpers";
+import EmptyCartMessage from "../components/EmptyCartMessage";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const { cartItems, getCartTotal, clearCart } = useCart();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false); const [shippingOptions, setShippingOptions] = useState([]);
-  const [selectedShipping, setSelectedShipping] = useState(null);
-  const [shippingCalculated, setShippingCalculated] = useState(false);
+  const [selectedShipping, setSelectedShipping] = useState(null); const [shippingCalculated, setShippingCalculated] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -24,54 +28,30 @@ const CheckoutPage = () => {
     cvv: "",
     cardholderName: "",
     notes: "",
-  });
-  const [errors, setErrors] = useState({});
-
-  const calculateShipping = useCallback(async () => {
-    if (!formData.zipCode || formData.zipCode.length < 8) {
-      alert("Por favor, preencha o CEP corretamente (8 dígitos)");
-      return;
+  }); const [errors, setErrors] = useState({}); useEffect(() => {
+    if (user) {
+      loadUserProfile(setFormData);
     }
-
+  }, [user]);
+  const calculateShipping = useCallback(async () => {
     setShippingOptions([]);
     setSelectedShipping(null);
     setShippingCalculated(false);
 
     try {
-      const shippingData = {
-        productIds: cartItems.map((item) => item.product.id),
-        quantities: cartItems.map((item) => item.quantity),
-        destinationZipCode: formData.zipCode.replace(/\D/g, ""),
-      };
-
-      const response = await shippingService.calculateShipping(shippingData);
-
-      if (response.data.success) {
-        setShippingOptions(response.data.options);
-        setShippingCalculated(true);
-        if (response.data.options.length > 0) {
-          setSelectedShipping(response.data.options[0]);
-        }
-      } else {
-        alert("Erro ao calcular frete: " + (response.data.error || "Erro desconhecido"));
-        setShippingCalculated(false);
+      const options = await calculateShippingOptions(formData.zipCode, cartItems);
+      setShippingOptions(options);
+      setShippingCalculated(true);
+      if (options.length > 0) {
+        setSelectedShipping(options[0]);
       }
     } catch (error) {
-      alert("Erro ao calcular frete:", error);
-      alert("Erro ao calcular o frete. Verifique o CEP e tente novamente.");
+      alert("Erro ao calcular frete: " + error.message);
       setShippingCalculated(false);
     }
   }, [formData.zipCode, cartItems]);
-
   useEffect(() => {
-    const cleanZip = formData.zipCode.replace(/\D/g, "");
-    if (cleanZip.length === 8) {
-      calculateShipping();
-    } else {
-      setShippingOptions([]);
-      setSelectedShipping(null);
-      setShippingCalculated(false);
-    }
+    handleZipCodeChange(formData.zipCode, calculateShipping, setShippingOptions, setSelectedShipping, setShippingCalculated);
   }, [formData.zipCode, calculateShipping]);
 
   const getShippingCost = () => {
@@ -98,121 +78,39 @@ const CheckoutPage = () => {
   const handleShippingSelection = (option) => {
     setSelectedShipping(option);
   };
-
   const validateForm = () => {
-    const newErrors = {};
-
-    const requiredFields = [
-      "firstName",
-      "lastName",
-      "email",
-      "phone",
-      "address",
-      "city",
-      "state",
-      "zipCode",
-      "cardNumber",
-      "expiryDate",
-      "cvv",
-      "cardholderName",
-    ];
-    requiredFields.forEach((field) => {
-      if (!formData[field].trim()) {
-        newErrors[field] = "Este campo é obrigatório";
-      }
-    });
-
-    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Por favor, insira um endereço de email válido";
-    }
-
-    if (formData.phone && !/^\+?[\d\s\-()]{10,}$/.test(formData.phone)) {
-      newErrors.phone = "Por favor, insira um número de telefone válido";
-    }
-
-    if (
-      formData.cardNumber &&
-      !/^\d{13,19}$/.test(formData.cardNumber.replace(/\s/g, ""))
-    ) {
-      newErrors.cardNumber = "Por favor, insira um número de cartão válido";
-    }
-
-    if (
-      formData.expiryDate &&
-      !/^(0[1-9]|1[0-2])\/\d{2}$/.test(formData.expiryDate)
-    ) {
-      newErrors.expiryDate = "Por favor, insira a data no formato MM/AA";
-    }
-
-    if (formData.cvv && !/^\d{3,4}$/.test(formData.cvv)) {
-      newErrors.cvv = "Por favor, insira um CVV válido";
-    }
-
+    const newErrors = validateFormData(formData);
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e) => {
+  }; const handleSubmit = async (e) => {
     e.preventDefault();
-    if (cartItems.length === 0) {
-      alert("Seu carrinho está vazio");
-      return;
-    } if (!validateForm()) {
+
+    try {
+      validateSubmission(cartItems, shippingCalculated, selectedShipping);
+    } catch (error) {
+      alert(error.message);
       return;
     }
 
-    if (!shippingCalculated || !selectedShipping) {
-      alert("Por favor, calcule e selecione uma opção de frete antes de finalizar o pedido");
+    if (!validateForm()) {
       return;
     }
 
     setLoading(true);
     try {
-      const orderData = {
-        customerName: `${formData.firstName} ${formData.lastName}`,
-        customerEmail: formData.email,
-        shippingAddress: `${formData.address}, ${formData.city}, ${formData.state} ${formData.zipCode}, ${formData.country}`,
-        items: cartItems.map((item) => ({
-          productId: item.product.id,
-          quantity: item.quantity,
-          unitPrice: item.product.price,
-        })),
-        shippingCost: selectedShipping.price,
-        shippingService: selectedShipping.serviceName,
-        shippingDays: selectedShipping.deliveryDays
-      };
-
+      const orderData = createOrderData(formData, cartItems, selectedShipping);
       const response = await orderService.createGuest(orderData);
       clearCart();
       navigate(`/order-confirmation/${response.data.orderId}`);
     } catch (error) {
-      setLoading(false);
-      alert("Falha ao processar o pedido. Tente novamente.");
+      alert("Falha ao processar o pedido: " + error);
       return;
     } finally {
       setLoading(false);
     }
   };
-
   if (cartItems.length === 0) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Seu Carrinho está Vazio
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Adicione alguns itens ao seu carrinho antes de finalizar a compra.
-          </p>
-          <button
-            onClick={() => navigate("/products")}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-          >
-            Continuar Comprando
-          </button>
-        </div>
-      </div>
-    );
+    return <EmptyCartMessage navigate={navigate} />;
   }
 
   return (
@@ -223,6 +121,7 @@ const CheckoutPage = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
+
           <form onSubmit={handleSubmit} className="space-y-8" id="checkout-form">
             <div className="bg-white rounded-lg shadow-sm border p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
@@ -411,57 +310,14 @@ const CheckoutPage = () => {
                       </p>)}
                   </div>
                 </div>
-              </div>
-            </div>
+              </div>            </div>
 
-            {shippingCalculated && shippingOptions.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                  Opções de Frete
-                </h2>
-                <div className="space-y-3">
-                  {shippingOptions.map((option, index) => (
-                    <div
-                      key={index}
-                      className={`p-3 border rounded-lg cursor-pointer transition-colors ${selectedShipping?.serviceCode === option.serviceCode
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-300 hover:border-gray-400"
-                        }`}
-                      onClick={() => handleShippingSelection(option)}
-                    >
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <p className="font-medium text-gray-900">
-                            {option.serviceName}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            Entrega entre {option.deliveryDays} dia{option.deliveryDays > 1 ? 's' : ''} út{option.deliveryDays > 1 ? 'eis' : 'il'}
-                          </p>
-                          {option.observations && (
-                            <p className="text-xs text-gray-500 mt-1">
-                              {option.observations}
-                            </p>
-                          )}
-                        </div>
-                        <div className="text-right">
-                          <p className="font-semibold text-gray-900">
-                            R$ {option.price.toFixed(2)}
-                          </p>
-                          <div className={`w-4 h-4 rounded-full border-2 ml-auto mt-1 ${selectedShipping?.serviceCode === option.serviceCode
-                            ? "border-blue-500 bg-blue-500"
-                            : "border-gray-300"
-                            }`}>
-                            {selectedShipping?.serviceCode === option.serviceCode && (
-                              <div className="w-2 h-2 bg-white rounded-full mx-auto mt-0.5"></div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            <ShippingSection
+              shippingCalculated={shippingCalculated}
+              shippingOptions={shippingOptions}
+              selectedShipping={selectedShipping}
+              handleShippingSelection={handleShippingSelection}
+            />
 
             <div className="bg-white rounded-lg shadow-sm border p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
@@ -612,24 +468,17 @@ const CheckoutPage = () => {
                 <span className="font-medium">
                   R$ {getCartTotal().toFixed(2)}
                 </span>
-              </div>
-              <div className="flex justify-between">
+              </div>              <div className="flex justify-between">
                 <span className="text-gray-600">Frete</span>
                 <span className="font-medium">
-                  {selectedShipping
-                    ? `R$ ${selectedShipping.price.toFixed(2)} - ${selectedShipping.serviceName}`
-                    : shippingCalculated
-                      ? "Selecione uma opção de entrega"
-                      : "Informe o CEP"}
+                  {getShippingDisplayText(selectedShipping, shippingCalculated)}
                 </span>
               </div>
-              <div className="flex justify-between pt-2 border-t">
+              <div className="flex justify-between pt-2 border-t">                <span className="text-lg font-semibold text-gray-900">
+                Total
+              </span>
                 <span className="text-lg font-semibold text-gray-900">
-                  Total
-                </span>
-                <span className="text-lg font-semibold text-gray-900">
-                  {selectedShipping ? `
-                  R$ ${getFinalTotal().toFixed(2)}` : "--"}
+                  {selectedShipping ? `R$ ${getFinalTotal().toFixed(2)}` : "--"}
                 </span>
               </div>
             </div>

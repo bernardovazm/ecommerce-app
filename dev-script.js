@@ -78,7 +78,7 @@ async function test() {
 async function dev() {
   await execCmd("docker compose up db rabbitmq -d");
 
-  console.log("Ambiente pronto:");
+  console.log("Execute:");
   console.log("  cd api && dotnet run --project Ecommerce.Api");
   console.log("  cd web && npm run dev");
 }
