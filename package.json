@@ -1,0 +1,19 @@
+{
+  "name": "ecommerce-app",
+  "version": "1.0.0",
+  "description": "Full stack ecommerce application",
+  "scripts": {
+    "dev-script": "node dev-script.js",
+    "setup": "node dev-script.js setup",
+    "build": "node dev-script.js build",
+    "test": "node dev-script.js test",
+    "dev": "node dev-script.js dev",
+    "docker": "node dev-script.js docker",
+    "clean": "node dev-script.js clean",
+    "quality": "node dev-script.js quality"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "private": true
+}

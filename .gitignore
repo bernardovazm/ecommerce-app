@@ -4,6 +4,11 @@
 .env.development
 .env.production
 
+# Build artifacts and temp files
+dist/
+build/
+*.tmp
+
 # OS generated files
 .DS_Store
 Thumbs.db
@@ -27,18 +32,8 @@ pids
 # Dependency directories
 node_modules/
 
-# Build artifacts
-dist/
-build/
-bin/
-obj/
-
 # Docker
 docker-compose.override.yml
-
-# Temporary files
-*.tmp
-*.temp
 
 # Quality analysis
 .scannerwork/

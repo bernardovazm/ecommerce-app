@@ -12,41 +12,29 @@ Aplicação full stack de loja virtual com .NET, React, PostgreSQL e Docker.
 
 ```bash
 # Configurar
-./scripts/setup.sh     # bash
-scripts\setup.ps1      # powershell
+npm run setup
+# Inicie os containers
+npm run docker
 
-# Iniciar containers
-docker compose up --build
-
-# Ao finalizar, acesse
-# Frontend: http://localhost:5173
-# API: http://localhost:7000/swagger
+# ou desenvolvimento local
+npm run dev
 ```
 
-### Testes e Setup
+**URLs:**
+
+- Frontend: http://localhost:5173
+- API: http://localhost:7000/swagger # Docker
+
+### Automação e Setup
 
 ```bash
-./scripts/setup.sh
-./scripts/build.sh
-./scripts/test.shs
-./scripts/quality.sh
-```
-
-### Desenvolvimento
-
-```bash
-# Banco de dados
-docker compose up db -d
-
-# Frontend
-cd web && npm run dev
-
-# Backend
-cd api && dotnet run --project Ecommerce.Api
-
-# Teste
-dotnet test --filter "Category=Unit"
-npm test -- --coverage
+npm run setup
+npm run build
+npm run test
+npm run dev
+npm run docker
+npm run clean
+npm run quality
 ```
 
 Projeto demonstrativo com foco em Clean Architecture, DDD e padrões modernos.
