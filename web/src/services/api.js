@@ -1,12 +1,30 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:7000/api";
+const getApiBaseUrl = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+
+  const isDocker =
+    window.location.hostname !== "localhost" &&
+    window.location.hostname !== "127.0.0.1";
+  const isProd = import.meta.env.PROD;
+
+  if (isProd || isDocker) {
+    return "http://localhost:7000/api";
+  }
+
+  return "http://localhost:5220/api";
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
+  timeout: 10000,
 });
 
 api.interceptors.request.use(

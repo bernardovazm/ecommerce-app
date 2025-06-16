@@ -53,3 +53,8 @@ docker-compose.override.yml
 .nyc_output/
 coverage/
 test-results.xml
+
+# Miscellaneous
+*.bak
+*.orig
+*.stackdump
