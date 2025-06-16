@@ -41,4 +41,28 @@ npm run clean
 npm run quality
 ```
 
+## Estrutura
+
+### Backend
+
+- Domain: Entidades e regras de negócio
+- Application: Casos de uso (CQRS)
+- Infrastructure: Dados e serviços
+- Api: Controllers e configuração
+- Tests: Testes unitários
+
+### Frontend
+
+- components: Componentes reutilizáveis
+- pages: Páginas da aplicação
+- context: Context API, estado global
+- services: Integração com API
+
+### Banco de dados
+
+- Usuários e Autenticação: Users, Customers
+- Catálogo de Produtos: Categories, Products
+- Sistema de Pedidos: Orders, OrderItems
+- Pagamentos e Envio: Payments, Shipments
+
 Projeto demonstrativo com foco em Clean Architecture, DDD e padrões modernos.
