@@ -39,7 +39,6 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            // Log the exception here if you have a logger
             return StatusCode(500, new { message = "An internal server error occurred", details = ex.Message });
         }
     }
@@ -65,7 +64,6 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            // Log the exception here if you have a logger
             return StatusCode(500, new { message = "An internal server error occurred", details = ex.Message });
         }
     }

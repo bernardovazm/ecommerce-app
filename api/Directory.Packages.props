@@ -1,39 +1,32 @@
 <Project>
   <ItemGroup>
-    <!-- ORM -->
     <PackageVersion Include="Microsoft.EntityFrameworkCore"            Version="8.0.5" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.5" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design"     Version="8.0.5" />
-    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL"    Version="8.0.4" />   <!-- ← 8.0.4 existe -->
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL"    Version="8.0.4" />
 
-    <!-- Mapper -->
     <PackageVersion Include="AutoMapper"                               Version="12.0.1" />
     <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection"
-                                                                   Version="12.0.1" />    <!-- CQRS / Bus -->
+                                                                   Version="12.0.1" />
     <PackageVersion Include="MediatR"                                  Version="12.1.1" />
     <PackageVersion Include="MassTransit"                              Version="8.2.1" />
-    <PackageVersion Include="MassTransit.RabbitMQ"                     Version="8.2.1" />    <!-- Messaging -->
+    <PackageVersion Include="MassTransit.RabbitMQ"                     Version="8.2.1" />
     <PackageVersion Include="RabbitMQ.Client"                          Version="6.8.1" />
     <PackageVersion Include="Microsoft.Extensions.Hosting"             Version="8.0.0" />
-      <!-- HTTP Client -->
     <PackageVersion Include="Microsoft.Extensions.Http"                Version="8.0.0" />
     <PackageVersion Include="System.Text.Json"                         Version="8.0.5" />
 
-    <!-- Swagger / OpenAPI -->
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi"             Version="8.0.5" />
-    <PackageVersion Include="Swashbuckle.AspNetCore"                   Version="6.6.1" />   <!-- ← 6.6.1 existe -->
+    <PackageVersion Include="Swashbuckle.AspNetCore"                   Version="6.6.1" />
 
-    <!-- Config helpers -->
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions"
                                                                    Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions"
                                                                    Version="8.0.0" />
 
-    <!-- Utilidades Domain -->
-    <PackageVersion Include="Ardalis.GuardClauses"                     Version="5.0.0" />   <!-- ← 5.0.0 é a mais recente -->
-    <PackageVersion Include="Ardalis.SharedKernel"                     Version="1.3.0" />   <!-- ← 1.3.0 existe -->
+    <PackageVersion Include="Ardalis.GuardClauses"                     Version="5.0.0" />
+    <PackageVersion Include="Ardalis.SharedKernel"                     Version="1.3.0" />
 
-    <!-- Authentication & Authorization -->
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.5" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.5" />
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt"          Version="7.6.0" />

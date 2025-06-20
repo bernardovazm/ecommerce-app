@@ -49,8 +49,27 @@ function checkDependencies() {
   }
 }
 
+function ensureEnvFile() {
+  const envPath = path.join(process.cwd(), ".env");
+  const envExamplePath = path.join(process.cwd(), ".env.example");
+
+  if (!fs.existsSync(envPath)) {
+    if (fs.existsSync(envExamplePath)) {
+      console.log("Criando arquivo .env baseado no .env.example");
+      fs.copyFileSync(envExamplePath, envPath);
+      console.log("Arquivo .env criado");
+      console.log("Configure as variáveis de ambiente conforme necessário.");
+    } else {
+      console.error("Arquivo .env.example não encontrado");
+      process.exit(1);
+    }
+  }
+}
+
 async function setup() {
   checkDependencies();
+  ensureEnvFile();
+  console.log("Tenha o docker em execução na sua máquina.");
 
   await execCmd("dotnet restore", "api");
   await execCmd("dotnet build", "api");
@@ -76,6 +95,7 @@ async function test() {
 }
 
 async function dev() {
+  ensureEnvFile();
   await execCmd("docker compose up db rabbitmq -d");
 
   console.log("Execute:");
@@ -84,6 +104,8 @@ async function dev() {
 }
 
 async function docker() {
+  ensureEnvFile();
+  console.log("Tenha o docker em execução na sua máquina.");
   await execCmd("docker compose up --build");
 }
 

@@ -41,7 +41,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__Default=Host=db;Port=5432;Database=ecommerce;Username=postgres;Password=postgres
       - ConnectionStrings__RabbitMQ=rabbitmq
-      - JWT_SECRET_KEY=example-development-secret-key-sample
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - PAGARME_API_KEY=${PAGARME_API_KEY}
     ports:
       - "7000:8080"
     depends_on:
