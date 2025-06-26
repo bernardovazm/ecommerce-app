@@ -1,10 +1,12 @@
 namespace Ecommerce.Domain.Interfaces;
+
 using Ecommerce.Domain.Entities;
 
 public interface IMessagePublisher
 {
     Task PublishAsync<T>(string queueName, T message, CancellationToken cancellationToken = default);
     Task PublishPaymentRequestAsync(Guid paymentRequestId, CancellationToken cancellationToken = default);
+    Task PublishOrderCreatedAsync(Guid orderId, CancellationToken cancellationToken = default);
 }
 
 public interface IMessageConsumer

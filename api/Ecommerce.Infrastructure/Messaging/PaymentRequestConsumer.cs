@@ -63,9 +63,7 @@ public class PaymentRequestConsumer : BackgroundService, IMessageConsumer
                     Port = 5672,
                     UserName = "guest",
                     Password = "guest"
-                };
-
-                _connection = factory.CreateConnection();
+                }; _connection = factory.CreateConnection();
                 _channel = _connection.CreateModel();
 
                 _channel.QueueDeclare(queue: "payment-requests", durable: true, exclusive: false, autoDelete: false, arguments: null);

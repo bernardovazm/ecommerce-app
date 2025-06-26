@@ -1,6 +1,8 @@
 using Ecommerce.Domain.Entities;
 using Ecommerce.Domain.Repositories;
+using Ecommerce.Domain.Interfaces;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Ecommerce.Application.Orders.Commands;
 
@@ -16,13 +18,21 @@ public record CreateGuestOrderCommand(
 
 public class CreateGuestOrderCommandHandler : IRequestHandler<CreateGuestOrderCommand, Guid>
 {
-    private readonly IOrderRepository _orderRepository;
+    private readonly Domain.Repositories.IOrderRepository _orderRepository;
     private readonly ICustomerRepository _customerRepository;
+    private readonly IMessagePublisher _messagePublisher;
+    private readonly ILogger<CreateGuestOrderCommandHandler> _logger;
 
-    public CreateGuestOrderCommandHandler(IOrderRepository orderRepository, ICustomerRepository customerRepository)
+    public CreateGuestOrderCommandHandler(
+        Domain.Repositories.IOrderRepository orderRepository,
+        ICustomerRepository customerRepository,
+        IMessagePublisher messagePublisher,
+        ILogger<CreateGuestOrderCommandHandler> logger)
     {
         _orderRepository = orderRepository;
         _customerRepository = customerRepository;
+        _messagePublisher = messagePublisher;
+        _logger = logger;
     }
 
     public async Task<Guid> Handle(CreateGuestOrderCommand request, CancellationToken cancellationToken)
@@ -52,11 +62,30 @@ public class CreateGuestOrderCommandHandler : IRequestHandler<CreateGuestOrderCo
             order.AddItem(orderItem);
         }
 
-        // Set shipping information
-        order.SetShippingInfo(request.ShippingCost, request.ShippingAddress, request.ShippingService, request.ShippingDays);
-
-        await _orderRepository.AddAsync(order);
+        order.SetShippingInfo(request.ShippingCost, request.ShippingAddress, request.ShippingService, request.ShippingDays); await _orderRepository.AddAsync(order);
         await _orderRepository.SaveChangesAsync();
+
+        _logger.LogInformation("Guest order {OrderId} created successfully for {CustomerEmail}. Total: {Total}",
+            order.Id, request.CustomerEmail, order.Total);
+
+        try
+        {
+            await _messagePublisher.PublishOrderCreatedAsync(order.Id, cancellationToken);
+            _logger.LogInformation("Order created notification sent to RabbitMQ for guest order {OrderId}", order.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to send order created notification to RabbitMQ for guest order {OrderId}", order.Id);
+        }
+
+        try
+        {
+            _logger.LogInformation("Guest order {OrderId} ready for payment processing", order.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to notify payment system for guest order {OrderId}", order.Id);
+        }
 
         return order.Id;
     }

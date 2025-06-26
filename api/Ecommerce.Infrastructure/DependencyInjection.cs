@@ -4,6 +4,7 @@ using Ecommerce.Infrastructure.Data;
 using Ecommerce.Infrastructure.Auth;
 using Ecommerce.Infrastructure.Email;
 using Ecommerce.Infrastructure.Messaging;
+using Ecommerce.Infrastructure.Payments;
 using Ecommerce.Infrastructure.Payments.Pagarme;
 using Ecommerce.Infrastructure.Payments.Pagarme.Configuration;
 using Ecommerce.Infrastructure.Shipping;
@@ -38,20 +39,19 @@ public static class DependencyInjection
     // Email
     services.AddScoped<IEmailService, SmtpEmailService>();
     services.AddScoped<IOrderNotificationService, OrderNotificationService>();
-
     // Payment
     services.Configure<PagarmeSettings>(configuration.GetSection(PagarmeSettings.SectionName));
     services.AddHttpClient<IPagarmeClient, PagarmeClient>();
     services.AddScoped<IPagarmeClient, PagarmeClient>();
+    services.AddScoped<IPaymentService, PagarmePaymentService>();
 
     // Shipping
     services.AddHttpClient<IShippingService, CorreiosShippingService>();
     services.AddScoped<IShippingService, CorreiosShippingService>();
-    services.AddScoped<IShippingCalculationService, ShippingCalculationService>();
-
-    // Messaging
+    services.AddScoped<IShippingCalculationService, ShippingCalculationService>();    // Messaging
     services.AddSingleton<IMessagePublisher, RabbitMQPublisher>();
     services.AddHostedService<PaymentRequestConsumer>();
+    services.AddHostedService<OrderCreatedConsumer>();
 
     return services;
   }
