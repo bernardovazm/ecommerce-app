@@ -17,10 +17,10 @@ Aplicação full stack de loja virtual com .NET, React, PostgreSQL e Docker.
 ```bash
 # Configurar
 npm run setup
-# Inicie os containers
+# Iniciar os containers
 npm run docker
 
-# ou desenvolvimento local
+# desenvolvimento local
 npm run dev
 ```
 
